@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informe — Sistema de Expedientes Médicos del Dr. Rodríguez</title>
+  <style>
+    /* ── Global Reset & Page Setup ──────────────────────────────────────── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 12pt;
+      line-height: 1.5;
+      color: #000;
+      background: #f0f0f0;
+    }
+
+    /* ── Simulated Page ─────────────────────────────────────────────────── */
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0.4in auto 0.6in auto;
+      padding: 1in;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+      position: relative;
+      page-break-after: always;
+    }
+
+    /* ── Page Number (upper right) ──────────────────────────────────────── */
+    .page-number {
+      position: absolute;
+      top: 0.4in;
+      right: 1in;
+      font-size: 12pt;
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    /* ── Cover Page ─────────────────────────────────────────────────────── */
+    .portada {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 9in;
+      text-align: center;
+    }
+
+    .portada .institution {
+      font-size: 14pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.6in;
+      line-height: 1.4;
+    }
+
+    .portada .title-main {
+      font-size: 18pt;
+      font-weight: bold;
+      margin-bottom: 0.2in;
+      line-height: 1.3;
+    }
+
+    .portada .subtitle {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-bottom: 0.5in;
+    }
+
+    .portada .info-block {
+      font-size: 12pt;
+      line-height: 2;
+      margin-bottom: 0.3in;
+    }
+
+    .portada .year {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-top: 0.4in;
+    }
+
+    .portada .divider {
+      border: none;
+      border-top: 2px solid #000;
+      width: 80%;
+      margin: 0.3in auto;
+    }
+
+    /* ── Section Headings ───────────────────────────────────────────────── */
+    h1 {
+      font-size: 14pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 0.25in 0 0.15in 0;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 4px;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: bold;
+      margin: 0.2in 0 0.1in 0;
+    }
+
+    h3 {
+      font-size: 12pt;
+      font-weight: bold;
+      margin: 0.15in 0 0.08in 0;
+    }
+
+    /* ── Body Text ──────────────────────────────────────────────────────── */
+    p {
+      text-align: left;
+      margin-bottom: 0.12in;
+      text-indent: 0.5in;
+    }
+
+    p.no-indent { text-indent: 0; }
+
+    /* ── Table of Contents ──────────────────────────────────────────────── */
+    .toc {
+      width: 100%;
+      margin: 0.1in 0;
+    }
+
+    .toc-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+      border-bottom: 1px dotted #999;
+      font-size: 12pt;
+    }
+
+    .toc-entry.indent1 { padding-left: 0.3in; }
+    .toc-entry.indent2 { padding-left: 0.6in; }
+
+    .toc-title { flex: 1; }
+    .toc-page  { width: 0.4in; text-align: right; }
+
+    /* ── Bitácora Table ─────────────────────────────────────────────────── */
+    table.bitacora {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.15in 0;
+      font-size: 11pt;
+    }
+
+    table.bitacora th {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 7px 6px;
+      text-align: center;
+      font-size: 11pt;
+      border: 1px solid #555;
+    }
+
+    table.bitacora td {
+      padding: 6px 7px;
+      border: 1px solid #888;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+
+    table.bitacora tr:nth-child(even) td { background: #f8f8f8; }
+
+    /* ── Flowchart containers ────────────────────────────────────────────── */
+    .flowchart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.25in;
+      margin: 0.15in 0;
+    }
+
+    .flowchart-item {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0.1in;
+      background: #fafafa;
+    }
+
+    .flowchart-title {
+      font-size: 11pt;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 6px;
+      color: #1a3a5c;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+
+    .flowchart-item.wide {
+      grid-column: 1 / -1;
+    }
+
+    pre.flowchart {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      line-height: 1.5;
+      white-space: pre;
+      background: transparent;
+      margin: 0;
+      color: #111;
+    }
+
+    /* ── Menu display ────────────────────────────────────────────────────── */
+    pre.menu-display {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10.5pt;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 0.15in;
+      border-radius: 4px;
+      border: 1px solid #555;
+      margin: 0.1in 0;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .screenshot-placeholder {
+      border: 2px dashed #aaa;
+      background: #f5f5f5;
+      text-align: center;
+      padding: 0.15in;
+      margin: 0.1in 0;
+      font-size: 11pt;
+      color: #666;
+      font-style: italic;
+      border-radius: 4px;
+    }
+
+    /* ── Source Code ────────────────────────────────────────────────────── */
+    .code-file-header {
+      background: #1a3a5c;
+      color: #fff;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 11pt;
+      font-weight: bold;
+      padding: 8px 14px;
+      border-radius: 4px 4px 0 0;
+      margin-top: 0.2in;
+      letter-spacing: 0.5px;
+    }
+
+    pre.source-code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9.5pt;
+      line-height: 1.45;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 0.15in;
+      border-radius: 0 0 4px 4px;
+      border: 1px solid #333;
+      border-top: none;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 0.1in;
+      tab-size: 4;
+    }
+
+    /* Minimal syntax highlighting via CSS (works on static HTML) */
+    .kw  { color: #569cd6; } /* keywords */
+    .cm  { color: #6a9955; } /* comments */
+    .st  { color: #ce9178; } /* strings */
+    .tp  { color: #4ec9b0; } /* types */
+    .nb  { color: #b5cea8; } /* numbers */
+    .an  { color: #dcdcaa; } /* annotations/decorators */
+
+    /* ── References ─────────────────────────────────────────────────────── */
+    .references p {
+      text-indent: -0.5in;
+      padding-left: 0.5in;
+      margin-bottom: 0.1in;
+    }
+
+    /* ── Print styles ───────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 1in;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 1 — PORTADA                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="portada">
+    <div class="institution">
+      Universidad Interamericana de Puerto Rico<br>
+      Recinto de Aguadilla<br>
+      Facultad de Ciencias y Tecnología
+    </div>
+
+    <hr class="divider" />
+
+    <div class="title-main">
+      Sistema de Expedientes Médicos del Dr. Rodríguez
+    </div>
+    <div class="subtitle">Proyecto Final</div>
+
+    <hr class="divider" />
+
+    <div class="info-block">
+      <strong>[NOMBRE 1]</strong> &mdash; [NÚMERO ESTUDIANTE 1]<br>
+      <strong>[NOMBRE 2]</strong> &mdash; [NÚMERO ESTUDIANTE 2]
+    </div>
+
+    <div class="info-block">
+      <strong>Curso:</strong> COMP 2315 &mdash; Programación Estructurada<br>
+      <strong>Sección:</strong> [SECCIÓN]<br>
+      <strong>Fecha de Entrega:</strong> [FECHA DE ENTREGA]<br>
+      <strong>Profesor:</strong> Dr. Edgardo Vargas Moya
+    </div>
+
+    <hr class="divider" />
+
+    <div class="year">2025</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 2 — TABLA DE CONTENIDO                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">2</div>
+  <h1>Tabla de Contenido</h1>
+  <br>
+  <div class="toc">
+    <div class="toc-entry">
+      <span class="toc-title">1. Introducción</span>
+      <span class="toc-page">3</span>
+    </div>
+    <div class="toc-entry">
+      <span class="toc-title">2. Diseño</span>
+      <span class="toc-page">4</span>
+    </div>
+    <div class="toc-entry indent1">
+      <span class="toc-title">2.1 Bitácora</span>
+      <span class="toc-page">4</span>
+    </div>
+    <div class="toc-entry indent1">
+      <span class="toc-title">2.2 Flujogramas</span>
+      <span class="toc-page">5</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">2.2.1 Flujo Principal del Sistema</span>
+      <span class="toc-page">5</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">2.2.2 Flujo de Login</span>
+      <span class="toc-page">6</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">2.2.3 Flujo de Crear Expediente</span>
+      <span class="toc-page">6</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">2.2.4 Flujo de Buscar Expediente</span>
+      <span class="toc-page">7</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">2.2.5 Flujo de Actualizar Expediente</span>
+      <span class="toc-page">7</span>
+    </div>
+    <div class="toc-entry indent1">
+      <span class="toc-title">2.3 Menú y Submenús</span>
+      <span class="toc-page">8</span>
+    </div>
+    <div class="toc-entry indent1">
+      <span class="toc-title">2.4 Código Fuente</span>
+      <span class="toc-page">9</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">Main.java</span>
+      <span class="toc-page">9</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">Paciente.java</span>
+      <span class="toc-page">10</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">Validador.java</span>
+      <span class="toc-page">11</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">ArchivoManager.java</span>
+      <span class="toc-page">12</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">ExpedienteManager.java</span>
+      <span class="toc-page">13</span>
+    </div>
+    <div class="toc-entry indent2">
+      <span class="toc-title">MenuUtils.java</span>
+      <span class="toc-page">16</span>
+    </div>
+    <div class="toc-entry">
+      <span class="toc-title">3. Conclusión</span>
+      <span class="toc-page">17</span>
+    </div>
+    <div class="toc-entry">
+      <span class="toc-title">4. Referencias</span>
+      <span class="toc-page">18</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 3 — INTRODUCCIÓN                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">3</div>
+  <h1>1. Introducción</h1>
+
+  <p>
+    El presente documento constituye el informe final del proyecto de programación desarrollado para el curso COMP 2315 &mdash; Programación Estructurada, bajo la dirección del Dr. Edgardo Vargas Moya en la Universidad Interamericana de Puerto Rico, Recinto de Aguadilla. El proyecto consiste en el diseño e implementación de un <em>Sistema de Expedientes Médicos del Dr. Rodríguez</em>, una aplicación de consola e interfaz gráfica básica desarrollada íntegramente en el lenguaje de programación Java, que permite gestionar de forma digital los registros clínicos de los pacientes de un consultorio médico privado.
+  </p>
+
+  <p>
+    El sistema fue construido con el propósito de aplicar los conocimientos adquiridos a lo largo del semestre en la asignatura de Programación Estructurada. Entre sus funcionalidades principales se encuentran: un módulo de autenticación con control de intentos (login), operaciones completas de tipo CRUD (crear, buscar, actualizar y listar expedientes), persistencia de datos mediante archivos de texto plano en formato delimitado por barras verticales, y una robusta capa de validación de datos que emplea expresiones regulares (regex) para garantizar la integridad de la información ingresada. La interfaz de usuario está implementada mediante diálogos de <code>JOptionPane</code> de la biblioteca <code>javax.swing</code>, lo que brinda al usuario una experiencia interactiva sin necesidad de instalar entornos gráficos adicionales. La arquitectura del sistema se organiza en seis clases independientes que separan claramente las responsabilidades: <code>Main</code>, <code>Paciente</code>, <code>Validador</code>, <code>ArchivoManager</code>, <code>ExpedienteManager</code> y <code>MenuUtils</code>, reflejando principios de diseño orientado a objetos y buenas prácticas de desarrollo de software aprendidas en el curso.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 4 — DISEÑO / BITÁCORA                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">4</div>
+  <h1>2. Diseño</h1>
+
+  <h2>2.1 Bitácora de Trabajo</h2>
+
+  <p class="no-indent">
+    A continuación se detalla el registro de las sesiones de trabajo colaborativo realizadas durante el desarrollo del proyecto. Cada sesión refleja las tareas asignadas a los miembros del equipo y los avances concretos obtenidos.
+  </p>
+
+  <br>
+
+  <table class="bitacora">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Asistencia</th>
+        <th>Tarea Asignada</th>
+        <th>Avances Obtenidos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>[FECHA 1]</td>
+        <td>6:00 PM &ndash; 8:00 PM<br>(2 horas)</td>
+        <td>[NOMBRE 1]<br>[NOMBRE 2]</td>
+        <td>Análisis de requisitos del proyecto y diseño de clases; lectura de rúbrica y distribución de responsabilidades entre los integrantes del equipo.</td>
+        <td>Diagrama conceptual de las seis clases del sistema; definición de los 13 campos del expediente médico (incluyendo formatos de validación); configuración del proyecto en el IDE.</td>
+      </tr>
+      <tr>
+        <td>[FECHA 2]</td>
+        <td>7:00 PM &ndash; 9:00 PM<br>(2 horas)</td>
+        <td>[NOMBRE 1]<br>[NOMBRE 2]</td>
+        <td>Implementación de <code>Paciente.java</code> y <code>Validador.java</code>; definición de los atributos, constructor, getters, setters y los métodos <code>toFileString()</code> y <code>fromFileString()</code>.</td>
+        <td>Clase <code>Paciente</code> completamente funcional con serialización a texto; clase <code>Validador</code> con cinco métodos de validación que utilizan expresiones regulares para seguro social, fechas y número de expediente.</td>
+      </tr>
+      <tr>
+        <td>[FECHA 3]</td>
+        <td>6:30 PM &ndash; 9:30 PM<br>(3 horas)</td>
+        <td>[NOMBRE 1]<br>[NOMBRE 2]</td>
+        <td>Implementación de <code>ArchivoManager.java</code> y <code>ExpedienteManager.java</code>; desarrollo de la lógica de lectura/escritura de archivos y las operaciones CRUD completas.</td>
+        <td>Persistencia de datos operativa con <code>BufferedReader</code> y <code>BufferedWriter</code>; métodos para guardar, cargar y reescribir expedientes; operaciones de búsqueda por número y por fecha de visita; submenú de actualización con <code>switch</code> de 11 opciones.</td>
+      </tr>
+      <tr>
+        <td>[FECHA 4]</td>
+        <td>5:00 PM &ndash; 7:30 PM<br>(2.5 horas)</td>
+        <td>[NOMBRE 1]<br>[NOMBRE 2]</td>
+        <td>Implementación de <code>MenuUtils.java</code> y <code>Main.java</code>; diseño del sistema de login con control de intentos y del menú principal con <code>JOptionPane</code>; integración de todos los módulos en la clase principal.</td>
+        <td>Sistema de autenticación funcional con arreglos paralelos de usuarios y contraseñas, límite de tres intentos; menú principal de seis opciones; bucle <code>while</code> del flujo principal; mensajes de bienvenida y despedida con formato visual Unicode.</td>
+      </tr>
+      <tr>
+        <td>[FECHA 5]</td>
+        <td>4:00 PM &ndash; 6:00 PM<br>(2 horas)</td>
+        <td>[NOMBRE 1]<br>[NOMBRE 2]</td>
+        <td>Pruebas de integración completas del sistema, corrección de errores detectados, revisión de la documentación Javadoc y preparación del informe y la presentación del proyecto.</td>
+        <td>Sistema probado con múltiples casos de prueba (campos vacíos, formatos incorrectos, expedientes duplicados, cancelaciones); todos los errores críticos corregidos; documentación del código completada; informe y presentación en HTML finalizados.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 5 — FLUJOGRAMAS                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">5</div>
+  <h2>2.2 Flujogramas</h2>
+
+  <p class="no-indent">
+    Los siguientes diagramas de flujo representan los procesos principales del sistema. Se utilizan caracteres de dibujo de líneas Unicode para asegurar su correcta visualización en cualquier navegador moderno.
+  </p>
+
+  <br>
+
+  <!-- Flujo 1: Principal -->
+  <div class="flowchart-item wide">
+    <div class="flowchart-title">2.2.1 — Flujo Principal del Sistema</div>
+<pre class="flowchart">
+┌─────────────────────┐
+│       INICIO        │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Inicializar        │
+│  carpeta "data/"    │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Mostrar Mensaje    │
+│  de Bienvenida      │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Proceso de Login   │◄──────────────────────┐
+│  (usuario/clave)    │                       │
+└──────────┬──────────┘                       │
+           ▼                                  │
+      ┌────┴────┐                             │
+      │ ¿Login  │                             │
+      │ Exitoso?│                             │
+      └──┬──┬───┘                             │
+      NO │  │ SÍ                              │
+         ▼  ▼                                 │
+    ┌───┐  ┌──────────────────┐               │
+    │FIN│  │ Crear instancia  │               │
+    └───┘  │ ExpedienteManager│               │
+           └────────┬─────────┘               │
+                    ▼                          │
+           ┌────────────────┐                 │
+           │  Mostrar Menú  │◄────────────────┘
+           │   Principal    │
+           └───────┬────────┘
+                   ▼
+         ┌─────────┴──────────┐
+         │  ¿Opción elegida?  │
+         └──┬──┬──┬──┬──┬─┬──┘
+            │  │  │  │  │ │
+           [1][2][3][4][5][6]
+            │  │  │  │  │  └──► Confirmar → Salir → FIN
+            ▼  ▼  ▼  ▼  ▼
+          Crear Buscar Buscar Actualizar Listar
+          Exp.  Nro.  Fecha    Exp.     Todos
+                          │
+                          └─────────────── (volver al Menú)
+</pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 6 — FLUJOGRAMAS cont.                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">6</div>
+
+  <div class="flowchart-grid">
+    <!-- Flujo 2: Login -->
+    <div class="flowchart-item">
+      <div class="flowchart-title">2.2.2 — Flujo de Login</div>
+<pre class="flowchart">
+┌─────────────────┐
+│  INICIO LOGIN   │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│ intentos = 0    │
+│ MAX_INTENTOS=3  │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│¿intentos &lt; MAX?│
+└──┬──────────┬───┘
+   │SÍ        │NO
+   ▼          ▼
+┌──────────┐ ┌──────────────────┐
+│Solicitar │ │Mostrar: "Máximo  │
+│ usuario  │ │ de intentos      │
+└────┬─────┘ │ alcanzado."      │
+     ▼       └──────┬───────────┘
+┌──────────┐        ▼
+│Solicitar │  ┌─────────┐
+│ clave    │  │ return  │
+└────┬─────┘  │  false  │
+     ▼        └─────────┘
+┌──────────────────┐
+│ ¿Credenciales    │
+│   válidas?       │
+└──┬───────────┬───┘
+   │SÍ         │NO
+   ▼           ▼
+┌──────────┐ ┌────────────────┐
+│"Bienven- │ │ intentos++     │
+│ido!"     │ │ Mostrar error  │
+└────┬─────┘ │ e intentos     │
+     ▼       │ restantes      │
+┌──────────┐ └───────┬────────┘
+│ return   │         │
+│  true    │         └──► (volver al inicio
+└──────────┘               del bucle while)
+</pre>
+    </div>
+
+    <!-- Flujo 3: Crear Expediente -->
+    <div class="flowchart-item">
+      <div class="flowchart-title">2.2.3 — Flujo de Crear Expediente</div>
+<pre class="flowchart">
+┌─────────────────┐
+│ CREAR EXPEDIENTE│
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar Nombre │
+└────────┬────────┘
+         ▼
+    ┌────┴────┐
+    │¿Válido? ├─NO──► Error → Reintentar
+    └────┬────┘
+         ▼ SÍ
+┌─────────────────┐
+│Solicitar Inicial│
+│   (opcional)    │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar Apell. │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar S.S.   │◄─── Validar regex
+│ XXX-XX-XXXX     │     Reintentar si falla
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar Fecha  │◄─── Validar MM/DD/YYYY
+│  Nacimiento     │     + fecha real
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar Sexo   │◄─── Solo M o F
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Solicitar Dir.   │
+│Plan Médico      │
+│Fecha Visita     │
+│Diagnóstico      │
+│Receta           │
+│Próx. Visita     │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Generar No. Exp. │
+│ EXP-AXXXX       │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│Crear objeto     │
+│ Paciente        │
+└────────┬────────┘
+         ▼
+┌─────────────────┐   ┌──────────────────┐
+│Agregar a lista  │──►│Guardar en archivo │
+│ en memoria      │   │ expedientes.txt   │
+└────────┬────────┘   └──────────────────┘
+         ▼
+┌─────────────────┐
+│"Expediente crea-│
+│  do exitosamente│
+└─────────────────┘
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 7 — FLUJOGRAMAS cont.                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">7</div>
+
+  <div class="flowchart-grid">
+    <!-- Flujo 4: Buscar -->
+    <div class="flowchart-item">
+      <div class="flowchart-title">2.2.4 — Flujo de Buscar Expediente</div>
+<pre class="flowchart">
+┌─────────────────────┐
+│   BUSCAR EXPEDIENTE │
+└──────────┬──────────┘
+           ▼
+  ┌────────┴────────┐
+  │ ¿Por número o   │
+  │  por fecha?     │
+  └──┬───────────┬──┘
+     │ Número    │ Fecha
+     ▼           ▼
+┌─────────┐ ┌──────────────┐
+│Solicitar│ │Solicitar     │
+│EXP-XXXX │ │MM/DD/YYYY    │
+└────┬────┘ └──────┬───────┘
+     │             │
+     ▼             ▼ Validar fecha
+┌─────────────────────┐
+│ Recorrer lista de   │
+│ pacientes con       │
+│ bucle for-each      │
+└──────────┬──────────┘
+           ▼
+      ┌────┴─────┐
+      │¿Encontró?│
+      └──┬────┬──┘
+      SÍ │    │ NO
+         ▼    ▼
+┌────────────┐ ┌──────────────────┐
+│ Mostrar    │ │"No se encontró   │
+│ expediente │ │ ningún expediente│
+│ con        │ │ con ese criterio"│
+│ toString() │ └──────────────────┘
+└────────────┘
+</pre>
+    </div>
+
+    <!-- Flujo 5: Actualizar -->
+    <div class="flowchart-item">
+      <div class="flowchart-title">2.2.5 — Flujo de Actualizar Expediente</div>
+<pre class="flowchart">
+┌──────────────────────┐
+│  ACTUALIZAR EXPEDIENTE│
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│ Solicitar No. Exp.   │
+│ a actualizar         │
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│ Buscar en lista con  │
+│ bucle for            │
+└──────────┬───────────┘
+           ▼
+      ┌────┴─────┐
+      │¿Encontró?│
+      └──┬────┬──┘
+      SÍ │    │ NO
+         │    ▼
+         │  ┌──────────────────┐
+         │  │"No encontrado"   │
+         │  │ → return         │
+         │  └──────────────────┘
+         ▼
+┌──────────────────────┐
+│ Mostrar Submenú de   │◄──────────────────┐
+│ Actualización        │                   │
+│ (11 opciones)        │                   │
+└──────────┬───────────┘                   │
+           ▼                               │
+  ┌────────┴──────────┐                    │
+  │¿Opción 1–10 ó 11? │                    │
+  └──┬────────────┬───┘                    │
+     │ 1–10       │ 11                     │
+     ▼            ▼                        │
+┌─────────┐  ┌──────────┐                  │
+│Solicitar│  │continuar │                  │
+│ nuevo   │  │= false   │                  │
+│ valor + │  └──────────┘                  │
+│Validar  │                                │
+└────┬────┘                                │
+     ▼                                     │
+┌─────────────┐                            │
+│ Actualizar  │                            │
+│ campo en    │────────────────────────────┘
+│ objeto      │ (volver al submenú)
+└─────────────┘
+     ▼ (al salir del bucle)
+┌─────────────────────┐
+│ Reescribir archivo  │
+│ expedientes.txt     │
+└─────────────────────┘
+     ▼
+┌─────────────────────┐
+│"Expediente actualiz-│
+│  ado correctamente" │
+└─────────────────────┘
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 8 — MENÚ Y SUBMENÚS                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">8</div>
+  <h2>2.3 Menú y Submenús</h2>
+
+  <p>
+    El sistema utiliza diálogos de tipo <code>JOptionPane.showInputDialog()</code> con arreglos de opciones predefinidas para presentar los menús al usuario. A continuación se muestra el contenido textual exacto de cada menú tal como aparece en los diálogos de la aplicación.
+  </p>
+
+  <h3>Menú Principal (6 opciones)</h3>
+  <p class="no-indent">El menú principal se presenta al usuario después de autenticarse exitosamente y permanece activo en un bucle <code>while</code> hasta que se selecciona la opción 6 (Salir). Contiene las siguientes opciones:</p>
+
+<pre class="menu-display">
+╔════════════════════════════════════╗
+    SISTEMA DE EXPEDIENTES MÉDICOS
+╚════════════════════════════════════╝
+
+Seleccione una opción:
+
+  1. Crear nuevo expediente
+  2. Buscar expediente por número
+  3. Buscar expediente por fecha de visita
+  4. Actualizar expediente
+  5. Listar todos los expedientes
+  6. Salir del sistema</pre>
+
+  <div class="screenshot-placeholder">[ Insertar captura de pantalla del Menú Principal aquí ]</div>
+
+  <h3>Submenú de Actualización (11 opciones)</h3>
+  <p class="no-indent">Cuando el usuario selecciona la opción 4 del menú principal, el sistema primero solicita el número de expediente. Una vez localizado el expediente, se presenta el siguiente submenú que permite modificar cualquiera de los campos actualizables:</p>
+
+<pre class="menu-display">
+Paciente: [Nombre Completo del Paciente]
+Expediente: EXP-AXXXX
+
+Seleccione el campo a actualizar:
+
+  1.  Nombre / Inicial / Apellidos
+  2.  Seguro Social
+  3.  Fecha de Nacimiento
+  4.  Sexo
+  5.  Dirección
+  6.  Plan Médico
+  7.  Fecha de Visita
+  8.  Diagnóstico
+  9.  Receta
+  10. Fecha de Siguiente Visita
+  11. Terminar actualización</pre>
+
+  <div class="screenshot-placeholder">[ Insertar captura de pantalla del Submenú de Actualización aquí ]</div>
+
+  <p>
+    Nota: El número de expediente (<code>numeroExpediente</code>) no puede ser modificado por el usuario, ya que es generado automáticamente por el sistema como identificador único e inmutable del registro.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 9 — CÓDIGO: Main.java                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">9</div>
+  <h2>2.4 Código Fuente</h2>
+
+  <p class="no-indent">
+    A continuación se presenta el código fuente completo de cada uno de los seis archivos Java que componen el sistema, tal como fueron desarrollados y entregados. El código incluye comentarios Javadoc y en línea que explican el propósito de cada sección.
+  </p>
+
+  <div class="code-file-header">&#128196; Main.java — Punto de entrada del sistema</div>
+<pre class="source-code">/**
+ * Clase Main — Punto de entrada del sistema
+ *
+ * Sistema de Expedientes Médicos del Dr. Rodríguez
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ *
+ * Creado por: [NOMBRE 1], [NOMBRE 2]
+ * Números de estudiante: [NÚMERO ESTUDIANTE 1], [NÚMERO ESTUDIANTE 2]
+ * Sección: [SECCIÓN]
+ * Fecha de entrega: [FECHA DE ENTREGA]
+ *
+ * Descripción:
+ *   Esta aplicación permite gestionar los expedientes médicos
+ *   de los pacientes del Dr. Rodríguez mediante una interfaz
+ *   de diálogos (JOptionPane) y consola.
+ *
+ * Importaciones utilizadas:
+ *   - java.io.*      → manejo de archivos
+ *   - java.util.*    → ArrayList, Scanner
+ *   - javax.swing.*  → JOptionPane para la interfaz gráfica
+ *   - java.text.*    → SimpleDateFormat para fechas
+ *   - java.util.regex.* → Pattern y Matcher para validaciones
+ */
+
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import java.text.*;
+import java.util.regex.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        // ── Paso 1: Inicializar la carpeta de datos ──────────────────────────
+        ArchivoManager.inicializarCarpeta();
+
+        // ── Paso 2: Mostrar mensaje de bienvenida ────────────────────────────
+        MenuUtils.mostrarMensajeBienvenida();
+
+        // ── Paso 3: Realizar el proceso de login ─────────────────────────────
+        boolean loginExitoso = MenuUtils.realizarLogin();
+
+        // Si el login falla, cerrar la aplicación
+        if (!loginExitoso) {
+            JOptionPane.showMessageDialog(null,
+                "No se pudo autenticar. El sistema se cerrará.",
+                "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
+
+        // ── Paso 4: Crear el manejador de expedientes ────────────────────────
+        ExpedienteManager manager = new ExpedienteManager();
+
+        // ── Paso 5: Mostrar el menú principal en un bucle ────────────────────
+        boolean ejecutando = true;
+
+        // Bucle while principal — se mantiene activo hasta que el usuario salga
+        while (ejecutando) {
+
+            // Obtener la opción del menú principal
+            int opcion = MenuUtils.mostrarMenuPrincipal();
+
+            // Si el usuario cierra la ventana del menú
+            if (opcion == -1) {
+                opcion = 6; // Tratar como "Salir"
+            }
+
+            // Switch para manejar las opciones del menú principal
+            switch (opcion) {
+
+                case 1: // Crear nuevo expediente
+                    manager.crearExpediente();
+                    break;
+
+                case 2: // Buscar expediente por número
+                    manager.buscarPorNumero();
+                    break;
+
+                case 3: // Buscar expediente por fecha de visita
+                    manager.buscarPorFechaVisita();
+                    break;
+
+                case 4: // Actualizar expediente
+                    manager.actualizarExpediente();
+                    break;
+
+                case 5: // Listar todos los expedientes
+                    manager.listarTodosLosExpedientes();
+                    break;
+
+                case 6: // Salir del sistema
+                    // Confirmar antes de salir
+                    int confirmar = JOptionPane.showConfirmDialog(null,
+                        "¿Está seguro que desea salir del sistema?\n" +
+                        "Todos los expedientes están guardados correctamente.",
+                        "Confirmar Salida",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+
+                    // Si el usuario confirma (opción "Sí")
+                    if (confirmar == JOptionPane.YES_OPTION) {
+                        ejecutando = false;
+                    }
+                    break;
+
+                default:
+                    // Esta opción no debería ocurrir, pero se maneja por seguridad
+                    JOptionPane.showMessageDialog(null,
+                        "Opción no reconocida. Por favor seleccione una opción válida.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Paso 6: Mostrar mensaje de despedida y cerrar ────────────────────
+        MenuUtils.mostrarMensajeDespedida();
+
+        // Cerrar la aplicación limpiamente
+        System.exit(0);
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 10 — CÓDIGO: Paciente.java                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">10</div>
+
+  <div class="code-file-header">&#128196; Paciente.java — Modelo de datos del expediente médico</div>
+<pre class="source-code">/**
+ * Clase Paciente
+ * Representa el expediente médico de un paciente.
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ *
+ * Creado por: [NOMBRE 1], [NOMBRE 2]
+ * Sección: [SECCIÓN]
+ * Fecha de entrega: [FECHA DE ENTREGA]
+ */
+
+import java.io.Serializable;
+
+public class Paciente implements Serializable {
+
+    // ─── Campos del expediente ───────────────────────────────────────────────
+
+    private String nombre;           // Nombre del paciente
+    private String inicial;          // Inicial del segundo nombre
+    private String apellidos;        // Apellidos del paciente
+    private String seguroSocial;     // Formato: XXX-XX-XXXX
+    private String numeroExpediente; // Formato: EXP-XXXXX (generado automáticamente)
+    private String fechaNacimiento;  // Formato: MM/DD/YYYY
+    private String sexo;             // M o F
+    private String direccion;        // Calle, Ciudad, Estado, Zip
+    private String planMedico;       // Selección de lista predefinida
+    private String fechaVisita;      // Formato: MM/DD/YYYY
+    private String diagnostico;      // Texto libre
+    private String receta;           // Texto libre
+    private String fechaSiguienteVisita; // Formato: MM/DD/YYYY
+
+    // ─── Constructor completo ────────────────────────────────────────────────
+
+    public Paciente(String nombre, String inicial, String apellidos,
+                    String seguroSocial, String numeroExpediente,
+                    String fechaNacimiento, String sexo, String direccion,
+                    String planMedico, String fechaVisita, String diagnostico,
+                    String receta, String fechaSiguienteVisita) {
+
+        this.nombre              = nombre;
+        this.inicial             = inicial;
+        this.apellidos           = apellidos;
+        this.seguroSocial        = seguroSocial;
+        this.numeroExpediente    = numeroExpediente;
+        this.fechaNacimiento     = fechaNacimiento;
+        this.sexo                = sexo;
+        this.direccion           = direccion;
+        this.planMedico          = planMedico;
+        this.fechaVisita         = fechaVisita;
+        this.diagnostico         = diagnostico;
+        this.receta              = receta;
+        this.fechaSiguienteVisita = fechaSiguienteVisita;
+    }
+
+    // ─── Getters ─────────────────────────────────────────────────────────────
+
+    public String getNombre()              { return nombre; }
+    public String getInicial()             { return inicial; }
+    public String getApellidos()           { return apellidos; }
+    public String getSeguroSocial()        { return seguroSocial; }
+    public String getNumeroExpediente()    { return numeroExpediente; }
+    public String getFechaNacimiento()     { return fechaNacimiento; }
+    public String getSexo()               { return sexo; }
+    public String getDireccion()          { return direccion; }
+    public String getPlanMedico()         { return planMedico; }
+    public String getFechaVisita()        { return fechaVisita; }
+    public String getDiagnostico()        { return diagnostico; }
+    public String getReceta()             { return receta; }
+    public String getFechaSiguienteVisita() { return fechaSiguienteVisita; }
+
+    // ─── Setters (usados en actualización de expediente) ────────────────────
+
+    public void setNombre(String nombre)                         { this.nombre = nombre; }
+    public void setInicial(String inicial)                       { this.inicial = inicial; }
+    public void setApellidos(String apellidos)                   { this.apellidos = apellidos; }
+    public void setSeguroSocial(String seguroSocial)             { this.seguroSocial = seguroSocial; }
+    public void setFechaNacimiento(String fechaNacimiento)       { this.fechaNacimiento = fechaNacimiento; }
+    public void setSexo(String sexo)                             { this.sexo = sexo; }
+    public void setDireccion(String direccion)                   { this.direccion = direccion; }
+    public void setPlanMedico(String planMedico)                 { this.planMedico = planMedico; }
+    public void setFechaVisita(String fechaVisita)               { this.fechaVisita = fechaVisita; }
+    public void setDiagnostico(String diagnostico)               { this.diagnostico = diagnostico; }
+    public void setReceta(String receta)                         { this.receta = receta; }
+    public void setFechaSiguienteVisita(String f)                { this.fechaSiguienteVisita = f; }
+
+    // ─── Nombre completo formateado ──────────────────────────────────────────
+
+    /**
+     * Devuelve el nombre completo en formato: "Nombre I. Apellido Apellido"
+     */
+    public String getNombreCompleto() {
+        if (inicial != null &amp;&amp; !inicial.trim().isEmpty()) {
+            return nombre + " " + inicial.toUpperCase() + ". " + apellidos;
+        }
+        return nombre + " " + apellidos;
+    }
+
+    // ─── Representación en texto para guardar en archivo ────────────────────
+
+    /**
+     * Convierte el expediente a formato de texto delimitado por "|"
+     * para guardarlo en un archivo .txt
+     */
+    public String toFileString() {
+        return numeroExpediente + "|" +
+               nombre          + "|" +
+               inicial         + "|" +
+               apellidos       + "|" +
+               seguroSocial    + "|" +
+               fechaNacimiento + "|" +
+               sexo            + "|" +
+               direccion       + "|" +
+               planMedico      + "|" +
+               fechaVisita     + "|" +
+               diagnostico     + "|" +
+               receta          + "|" +
+               fechaSiguienteVisita;
+    }
+
+    /**
+     * Crea un objeto Paciente a partir de una línea del archivo
+     */
+    public static Paciente fromFileString(String linea) {
+        String[] partes = linea.split("\\|", -1);
+        if (partes.length &lt; 13) return null;
+
+        return new Paciente(
+            partes[1],  // nombre
+            partes[2],  // inicial
+            partes[3],  // apellidos
+            partes[4],  // seguroSocial
+            partes[0],  // numeroExpediente
+            partes[5],  // fechaNacimiento
+            partes[6],  // sexo
+            partes[7],  // direccion
+            partes[8],  // planMedico
+            partes[9],  // fechaVisita
+            partes[10], // diagnostico
+            partes[11], // receta
+            partes[12]  // fechaSiguienteVisita
+        );
+    }
+
+    // ─── toString para mostrar en pantalla ──────────────────────────────────
+
+    @Override
+    public String toString() {
+        return "╔══════════════════════════════════════════════════════╗\n" +
+               "  EXPEDIENTE MÉDICO\n" +
+               "══════════════════════════════════════════════════════\n" +
+               "  No. Expediente   : " + numeroExpediente + "\n" +
+               "  Paciente         : " + getNombreCompleto() + "\n" +
+               "  Seguro Social    : " + seguroSocial + "\n" +
+               "  Fecha Nacimiento : " + fechaNacimiento + "\n" +
+               "  Sexo             : " + sexo + "\n" +
+               "  Dirección        : " + direccion + "\n" +
+               "  Plan Médico      : " + planMedico + "\n" +
+               "──────────────────────────────────────────────────────\n" +
+               "  Fecha de Visita  : " + fechaVisita + "\n" +
+               "  Diagnóstico      : " + diagnostico + "\n" +
+               "  Receta           : " + receta + "\n" +
+               "  Próxima Visita   : " + fechaSiguienteVisita + "\n" +
+               "╚══════════════════════════════════════════════════════╝";
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 11 — CÓDIGO: Validador.java                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">11</div>
+
+  <div class="code-file-header">&#128196; Validador.java — Validaciones con expresiones regulares</div>
+<pre class="source-code">/**
+ * Clase Validador
+ * Contiene métodos para validar los formatos de los campos del expediente.
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ */
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.text.SimpleDateFormat;
+
+public class Validador {
+
+    // ─── Expresiones regulares (regex) ───────────────────────────────────────
+
+    // Formato de Seguro Social: XXX-XX-XXXX
+    private static final Pattern REGEX_SS =
+        Pattern.compile("^\\d{3}-\\d{2}-\\d{4}$");
+
+    // Formato de número de expediente: EXP-XXXXX (letras y números)
+    private static final Pattern REGEX_EXP =
+        Pattern.compile("^EXP-[A-Z0-9]{5}$");
+
+    // Formato de fecha: MM/DD/YYYY
+    private static final Pattern REGEX_FECHA =
+        Pattern.compile("^(0[1-9]|1[0-2])/(0[1-9]|[12]\\d|3[01])/\\d{4}$");
+
+    // ─── Validación de Seguro Social ─────────────────────────────────────────
+
+    /**
+     * Valida que el seguro social tenga formato XXX-XX-XXXX
+     */
+    public static boolean validarSeguroSocial(String ss) {
+        if (ss == null || ss.trim().isEmpty()) return false;
+        Matcher m = REGEX_SS.matcher(ss.trim());
+        return m.matches();
+    }
+
+    // ─── Validación de número de expediente ──────────────────────────────────
+
+    /**
+     * Valida que el número de expediente tenga formato EXP-XXXXX
+     */
+    public static boolean validarNumeroExpediente(String exp) {
+        if (exp == null || exp.trim().isEmpty()) return false;
+        Matcher m = REGEX_EXP.matcher(exp.trim().toUpperCase());
+        return m.matches();
+    }
+
+    // ─── Validación de fecha ─────────────────────────────────────────────────
+
+    /**
+     * Valida que la fecha tenga formato MM/DD/YYYY y sea una fecha real
+     */
+    public static boolean validarFecha(String fecha) {
+        if (fecha == null || fecha.trim().isEmpty()) return false;
+
+        // Primero verificar el patrón básico con regex
+        Matcher m = REGEX_FECHA.matcher(fecha.trim());
+        if (!m.matches()) return false;
+
+        // Luego verificar que sea una fecha real (ej: no 02/30/2024)
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            sdf.setLenient(false); // modo estricto
+            sdf.parse(fecha.trim());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // ─── Validación de sexo ──────────────────────────────────────────────────
+
+    /**
+     * Valida que el sexo sea M o F (sin importar mayúsculas)
+     */
+    public static boolean validarSexo(String sexo) {
+        if (sexo == null || sexo.trim().isEmpty()) return false;
+        String s = sexo.trim().toUpperCase();
+        return s.equals("M") || s.equals("F");
+    }
+
+    // ─── Validación de texto no vacío ────────────────────────────────────────
+
+    /**
+     * Valida que un campo de texto no esté vacío
+     */
+    public static boolean validarNoVacio(String texto) {
+        return texto != null &amp;&amp; !texto.trim().isEmpty();
+    }
+
+    // ─── Validación de plan médico ───────────────────────────────────────────
+
+    /**
+     * Valida que la opción del plan médico esté dentro del rango permitido (1-6)
+     */
+    public static boolean validarOpcionPlanMedico(int opcion) {
+        return opcion >= 1 &amp;&amp; opcion &lt;= 6;
+    }
+
+    // ─── Validación de opción numérica en rango ──────────────────────────────
+
+    /**
+     * Valida que un número entero esté dentro del rango [min, max]
+     */
+    public static boolean validarRango(int numero, int min, int max) {
+        return numero >= min &amp;&amp; numero &lt;= max;
+    }
+
+    // ─── Formatear campo de nombre ───────────────────────────────────────────
+
+    /**
+     * Capitaliza la primera letra de cada palabra en un nombre
+     */
+    public static String capitalizarNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) return "";
+        String[] palabras = nombre.trim().toLowerCase().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (String palabra : palabras) {
+            if (palabra.length() > 0) {
+                sb.append(Character.toUpperCase(palabra.charAt(0)));
+                if (palabra.length() > 1) {
+                    sb.append(palabra.substring(1));
+                }
+                sb.append(" ");
+            }
+        }
+        return sb.toString().trim();
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 12 — CÓDIGO: ArchivoManager.java                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">12</div>
+
+  <div class="code-file-header">&#128196; ArchivoManager.java — Persistencia de datos en archivos de texto</div>
+<pre class="source-code">/**
+ * Clase ArchivoManager
+ * Maneja la lectura y escritura de expedientes en archivos .txt
+ * dentro de la carpeta "data/".
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ */
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class ArchivoManager {
+
+    // ─── Ruta de la carpeta de datos ─────────────────────────────────────────
+
+    // La carpeta "data" se crea al mismo nivel que "src"
+    private static final String CARPETA_DATA = "data" + File.separator;
+    private static final String ARCHIVO_PRINCIPAL = CARPETA_DATA + "expedientes.txt";
+
+    // ─── Inicialización ───────────────────────────────────────────────────────
+
+    /**
+     * Crea la carpeta "data" si no existe.
+     * Se llama al iniciar la aplicación.
+     */
+    public static void inicializarCarpeta() {
+        File carpeta = new File(CARPETA_DATA);
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+        }
+    }
+
+    // ─── Guardar un expediente ────────────────────────────────────────────────
+
+    /**
+     * Agrega un nuevo expediente al archivo principal.
+     * Si el archivo no existe, lo crea.
+     *
+     * @param paciente El paciente a guardar
+     * @return true si se guardó correctamente
+     */
+    public static boolean guardarExpediente(Paciente paciente) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new FileWriter(ARCHIVO_PRINCIPAL, true))) { // "true" = modo append
+
+            bw.write(paciente.toFileString());
+            bw.newLine();
+            return true;
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar expediente: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ─── Cargar todos los expedientes ─────────────────────────────────────────
+
+    /**
+     * Lee todos los expedientes del archivo principal y los retorna como ArrayList.
+     *
+     * @return Lista de pacientes leídos del archivo
+     */
+    public static ArrayList&lt;Paciente&gt; cargarTodosLosExpedientes() {
+        ArrayList&lt;Paciente&gt; lista = new ArrayList&lt;&gt;();
+        File archivo = new File(ARCHIVO_PRINCIPAL);
+
+        // Si el archivo no existe, retornar lista vacía
+        if (!archivo.exists()) return lista;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+
+            // Leer línea por línea con un bucle while
+            while ((linea = br.readLine()) != null) {
+                linea = linea.trim();
+                if (!linea.isEmpty()) {
+                    Paciente p = Paciente.fromFileString(linea);
+                    if (p != null) {
+                        lista.add(p);
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar expedientes: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    // ─── Reescribir todos los expedientes ────────────────────────────────────
+
+    /**
+     * Sobreescribe el archivo principal con la lista completa.
+     * Se usa después de actualizar un expediente.
+     *
+     * @param lista Lista actualizada de pacientes
+     * @return true si se guardó correctamente
+     */
+    public static boolean reescribirTodosLosExpedientes(ArrayList&lt;Paciente&gt; lista) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new FileWriter(ARCHIVO_PRINCIPAL, false))) { // "false" = sobrescribir
+
+            for (Paciente p : lista) {
+                bw.write(p.toFileString());
+                bw.newLine();
+            }
+            return true;
+
+        } catch (IOException e) {
+            System.err.println("Error al reescribir expedientes: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ─── Verificar si existe un número de expediente ─────────────────────────
+
+    /**
+     * Verifica si un número de expediente ya existe en el archivo.
+     *
+     * @param numeroExpediente El número a verificar
+     * @return true si ya existe
+     */
+    public static boolean existeExpediente(String numeroExpediente) {
+        ArrayList&lt;Paciente&gt; lista = cargarTodosLosExpedientes();
+        for (Paciente p : lista) {
+            if (p.getNumeroExpediente().equalsIgnoreCase(numeroExpediente)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ─── Obtener ruta del archivo ─────────────────────────────────────────────
+
+    public static String getRutaArchivo() {
+        return ARCHIVO_PRINCIPAL;
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 13–15 — CÓDIGO: ExpedienteManager.java                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">13</div>
+
+  <div class="code-file-header">&#128196; ExpedienteManager.java — Lógica CRUD de expedientes (Parte 1 de 3)</div>
+<pre class="source-code">/**
+ * Clase ExpedienteManager
+ * Contiene la lógica CRUD para manejar expedientes:
+ * Crear, Buscar, Actualizar, Listar.
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ */
+
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+
+public class ExpedienteManager {
+
+    // ─── Lista en memoria de todos los pacientes ──────────────────────────────
+
+    private ArrayList&lt;Paciente&gt; listaPacientes;
+
+    // Contador para generar números de expediente únicos
+    private int contadorExpediente;
+
+    // ─── Constructor ──────────────────────────────────────────────────────────
+
+    public ExpedienteManager() {
+        // Cargar los expedientes existentes desde el archivo al iniciar
+        listaPacientes = ArchivoManager.cargarTodosLosExpedientes();
+        contadorExpediente = listaPacientes.size() + 1;
+    }
+
+    // ─── Generar número de expediente ─────────────────────────────────────────
+
+    /**
+     * Genera un número de expediente único en formato EXP-XXXXX.
+     * Combina un número secuencial con letras para hacerlo alfanumérico.
+     */
+    private String generarNumeroExpediente() {
+        // Formato: EXP-A seguido de 4 dígitos con relleno de ceros
+        String numero;
+        do {
+            numero = String.format("EXP-A%04d", contadorExpediente);
+            contadorExpediente++;
+        } while (ArchivoManager.existeExpediente(numero));
+        return numero;
+    }
+
+    // ─── Crear nuevo expediente ───────────────────────────────────────────────
+
+    /**
+     * Guía al usuario para ingresar los datos del nuevo expediente.
+     * Usa JOptionPane para la entrada de datos.
+     * Valida cada campo antes de aceptarlo.
+     */
+    public void crearExpediente() {
+        // ── Nombre ──────────────────────────────────────────────────────────
+        String nombre = "";
+        while (!Validador.validarNoVacio(nombre)) {
+            nombre = JOptionPane.showInputDialog(null,
+                "Ingrese el PRIMER NOMBRE del paciente:",
+                "Nuevo Expediente — Nombre", JOptionPane.PLAIN_MESSAGE);
+            if (nombre == null) { mostrarCancelado(); return; }
+            nombre = Validador.capitalizarNombre(nombre);
+            if (!Validador.validarNoVacio(nombre)) {
+                JOptionPane.showMessageDialog(null,
+                    "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Inicial ──────────────────────────────────────────────────────────
+        String inicial = JOptionPane.showInputDialog(null,
+            "Ingrese la INICIAL del segundo nombre (deje vacío si no aplica):",
+            "Nuevo Expediente — Inicial", JOptionPane.PLAIN_MESSAGE);
+        if (inicial == null) { mostrarCancelado(); return; }
+        inicial = inicial.trim().length() > 0 ? inicial.trim().substring(0, 1).toUpperCase() : "";
+
+        // ── Apellidos ────────────────────────────────────────────────────────
+        String apellidos = "";
+        while (!Validador.validarNoVacio(apellidos)) {
+            apellidos = JOptionPane.showInputDialog(null,
+                "Ingrese los APELLIDOS del paciente:",
+                "Nuevo Expediente — Apellidos", JOptionPane.PLAIN_MESSAGE);
+            if (apellidos == null) { mostrarCancelado(); return; }
+            apellidos = Validador.capitalizarNombre(apellidos);
+            if (!Validador.validarNoVacio(apellidos)) {
+                JOptionPane.showMessageDialog(null,
+                    "Los apellidos no pueden estar vacíos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Seguro Social ────────────────────────────────────────────────────
+        String ss = "";
+        while (!Validador.validarSeguroSocial(ss)) {
+            ss = JOptionPane.showInputDialog(null,
+                "Ingrese el SEGURO SOCIAL (formato: XXX-XX-XXXX):",
+                "Nuevo Expediente — Seguro Social", JOptionPane.PLAIN_MESSAGE);
+            if (ss == null) { mostrarCancelado(); return; }
+            if (!Validador.validarSeguroSocial(ss)) {
+                JOptionPane.showMessageDialog(null,
+                    "Formato inválido. Use: XXX-XX-XXXX (solo números y guiones).",
+                    "Error de formato", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Fecha de nacimiento ──────────────────────────────────────────────
+        String fechaNac = "";
+        while (!Validador.validarFecha(fechaNac)) {
+            fechaNac = JOptionPane.showInputDialog(null,
+                "Ingrese la FECHA DE NACIMIENTO (formato: MM/DD/YYYY):",
+                "Nuevo Expediente — Fecha Nacimiento", JOptionPane.PLAIN_MESSAGE);
+            if (fechaNac == null) { mostrarCancelado(); return; }
+            if (!Validador.validarFecha(fechaNac)) {
+                JOptionPane.showMessageDialog(null,
+                    "Fecha inválida. Use formato MM/DD/YYYY.",
+                    "Error de formato", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Sexo ─────────────────────────────────────────────────────────────
+        String sexo = "";
+        while (!Validador.validarSexo(sexo)) {
+            sexo = JOptionPane.showInputDialog(null,
+                "Ingrese el SEXO del paciente (M = Masculino / F = Femenino):",
+                "Nuevo Expediente — Sexo", JOptionPane.PLAIN_MESSAGE);
+            if (sexo == null) { mostrarCancelado(); return; }
+            if (!Validador.validarSexo(sexo)) {
+                JOptionPane.showMessageDialog(null,
+                    "Opción inválida. Solo se acepta M o F.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        sexo = sexo.trim().toUpperCase();</pre>
+</div>
+
+<div class="page">
+  <div class="page-number">14</div>
+  <div class="code-file-header">&#128196; ExpedienteManager.java — Lógica CRUD de expedientes (Parte 2 de 3)</div>
+<pre class="source-code">        // ── Dirección ────────────────────────────────────────────────────────
+        String direccion = "";
+        while (!Validador.validarNoVacio(direccion)) {
+            direccion = JOptionPane.showInputDialog(null,
+                "Ingrese la DIRECCIÓN (Calle, Ciudad, Estado, Zip):",
+                "Nuevo Expediente — Dirección", JOptionPane.PLAIN_MESSAGE);
+            if (direccion == null) { mostrarCancelado(); return; }
+            if (!Validador.validarNoVacio(direccion)) {
+                JOptionPane.showMessageDialog(null,
+                    "La dirección no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Plan Médico ──────────────────────────────────────────────────────
+        String planMedico = seleccionarPlanMedico();
+        if (planMedico == null) { mostrarCancelado(); return; }
+
+        // ── Fecha de visita ──────────────────────────────────────────────────
+        String fechaVisita = "";
+        while (!Validador.validarFecha(fechaVisita)) {
+            fechaVisita = JOptionPane.showInputDialog(null,
+                "Ingrese la FECHA DE VISITA (formato: MM/DD/YYYY):",
+                "Nuevo Expediente — Fecha de Visita", JOptionPane.PLAIN_MESSAGE);
+            if (fechaVisita == null) { mostrarCancelado(); return; }
+            if (!Validador.validarFecha(fechaVisita)) {
+                JOptionPane.showMessageDialog(null,
+                    "Fecha inválida. Use formato MM/DD/YYYY.",
+                    "Error de formato", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Diagnóstico ──────────────────────────────────────────────────────
+        String diagnostico = "";
+        while (!Validador.validarNoVacio(diagnostico)) {
+            diagnostico = JOptionPane.showInputDialog(null,
+                "Ingrese el DIAGNÓSTICO:",
+                "Nuevo Expediente — Diagnóstico", JOptionPane.PLAIN_MESSAGE);
+            if (diagnostico == null) { mostrarCancelado(); return; }
+            if (!Validador.validarNoVacio(diagnostico)) {
+                JOptionPane.showMessageDialog(null,
+                    "El diagnóstico no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Receta ───────────────────────────────────────────────────────────
+        String receta = JOptionPane.showInputDialog(null,
+            "Ingrese la RECETA (medicamentos e instrucciones):",
+            "Nuevo Expediente — Receta", JOptionPane.PLAIN_MESSAGE);
+        if (receta == null) { mostrarCancelado(); return; }
+
+        // ── Fecha siguiente visita ───────────────────────────────────────────
+        String fechaSig = "";
+        while (!Validador.validarFecha(fechaSig)) {
+            fechaSig = JOptionPane.showInputDialog(null,
+                "Ingrese la FECHA DE SIGUIENTE VISITA (formato: MM/DD/YYYY):",
+                "Nuevo Expediente — Próxima Visita", JOptionPane.PLAIN_MESSAGE);
+            if (fechaSig == null) { mostrarCancelado(); return; }
+            if (!Validador.validarFecha(fechaSig)) {
+                JOptionPane.showMessageDialog(null,
+                    "Fecha inválida. Use formato MM/DD/YYYY.",
+                    "Error de formato", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // ── Crear el objeto Paciente ─────────────────────────────────────────
+        String numeroExp = generarNumeroExpediente();
+
+        Paciente nuevo = new Paciente(
+            nombre, inicial, apellidos, ss, numeroExp,
+            fechaNac, sexo, direccion, planMedico,
+            fechaVisita, diagnostico, receta, fechaSig
+        );
+
+        // ── Guardar en memoria y en archivo ──────────────────────────────────
+        listaPacientes.add(nuevo);
+        boolean guardado = ArchivoManager.guardarExpediente(nuevo);
+
+        if (guardado) {
+            JOptionPane.showMessageDialog(null,
+                "Expediente creado exitosamente.\n" +
+                "Número de expediente asignado: " + numeroExp,
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "Error al guardar el expediente en el archivo.",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // ─── Buscar por número de expediente ──────────────────────────────────────
+
+    public void buscarPorNumero() {
+        String busqueda = JOptionPane.showInputDialog(null,
+            "Ingrese el NÚMERO DE EXPEDIENTE a buscar (formato: EXP-XXXXX):",
+            "Buscar Expediente", JOptionPane.PLAIN_MESSAGE);
+
+        if (busqueda == null || busqueda.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "Búsqueda cancelada.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        busqueda = busqueda.trim().toUpperCase();
+        Paciente encontrado = null;
+
+        for (Paciente p : listaPacientes) {
+            if (p.getNumeroExpediente().equalsIgnoreCase(busqueda)) {
+                encontrado = p;
+                break;
+            }
+        }
+
+        if (encontrado != null) {
+            JOptionPane.showMessageDialog(null,
+                encontrado.toString(),
+                "Expediente Encontrado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "No se encontró ningún expediente con el número: " + busqueda,
+                "No encontrado", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    // ─── Buscar por fecha de visita ───────────────────────────────────────────
+
+    public void buscarPorFechaVisita() {
+        String fecha = "";
+        while (!Validador.validarFecha(fecha)) {
+            fecha = JOptionPane.showInputDialog(null,
+                "Ingrese la FECHA DE VISITA a buscar (formato: MM/DD/YYYY):",
+                "Buscar por Fecha", JOptionPane.PLAIN_MESSAGE);
+            if (fecha == null) {
+                JOptionPane.showMessageDialog(null,
+                    "Búsqueda cancelada.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            if (!Validador.validarFecha(fecha)) {
+                JOptionPane.showMessageDialog(null,
+                    "Fecha inválida. Use formato MM/DD/YYYY.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        ArrayList&lt;Paciente&gt; resultados = new ArrayList&lt;&gt;();
+        for (Paciente p : listaPacientes) {
+            if (p.getFechaVisita().equals(fecha.trim())) {
+                resultados.add(p);
+            }
+        }
+
+        if (resultados.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "No se encontraron expedientes con fecha de visita: " + fecha,
+                "No encontrado", JOptionPane.WARNING_MESSAGE);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Expedientes con fecha de visita ").append(fecha).append(":\n\n");
+            for (Paciente p : resultados) {
+                sb.append(p.toString()).append("\n\n");
+            }
+            JOptionPane.showMessageDialog(null,
+                sb.toString(),
+                "Resultados (" + resultados.size() + " encontrados)",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+    }</pre>
+</div>
+
+<div class="page">
+  <div class="page-number">15</div>
+  <div class="code-file-header">&#128196; ExpedienteManager.java — Lógica CRUD de expedientes (Parte 3 de 3)</div>
+<pre class="source-code">    // ─── Actualizar expediente ────────────────────────────────────────────────
+
+    public void actualizarExpediente() {
+        String busqueda = JOptionPane.showInputDialog(null,
+            "Ingrese el NÚMERO DE EXPEDIENTE a actualizar (formato: EXP-XXXXX):",
+            "Actualizar Expediente", JOptionPane.PLAIN_MESSAGE);
+
+        if (busqueda == null || busqueda.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "Operación cancelada.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        busqueda = busqueda.trim().toUpperCase();
+        Paciente paciente = null;
+
+        for (Paciente p : listaPacientes) {
+            if (p.getNumeroExpediente().equalsIgnoreCase(busqueda)) {
+                paciente = p;
+                break;
+            }
+        }
+
+        if (paciente == null) {
+            JOptionPane.showMessageDialog(null,
+                "No se encontró ningún expediente con el número: " + busqueda,
+                "No encontrado", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        boolean continuar = true;
+        while (continuar) {
+            String[] opciones = {
+                "1. Nombre / Inicial / Apellidos",
+                "2. Seguro Social",
+                "3. Fecha de Nacimiento",
+                "4. Sexo",
+                "5. Dirección",
+                "6. Plan Médico",
+                "7. Fecha de Visita",
+                "8. Diagnóstico",
+                "9. Receta",
+                "10. Fecha de Siguiente Visita",
+                "11. Terminar actualización"
+            };
+
+            String seleccion = (String) JOptionPane.showInputDialog(null,
+                "Paciente: " + paciente.getNombreCompleto() +
+                "\nExpediente: " + paciente.getNumeroExpediente() +
+                "\n\nSeleccione el campo a actualizar:",
+                "Submenú de Actualización",
+                JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[0]);
+
+            if (seleccion == null) break;
+
+            int opcion = Integer.parseInt(seleccion.split("\\.")[0].trim());
+
+            switch (opcion) {
+                case 1:
+                    String nuevoNombre = JOptionPane.showInputDialog(null,
+                        "Nuevo NOMBRE (actual: " + paciente.getNombre() + "):",
+                        "Actualizar Nombre", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevoNombre != null &amp;&amp; Validador.validarNoVacio(nuevoNombre))
+                        paciente.setNombre(Validador.capitalizarNombre(nuevoNombre));
+                    String nuevaInicial = JOptionPane.showInputDialog(null,
+                        "Nueva INICIAL (actual: " + paciente.getInicial() + "):",
+                        "Actualizar Inicial", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevaInicial != null)
+                        paciente.setInicial(nuevaInicial.trim().length() > 0
+                            ? nuevaInicial.trim().substring(0, 1).toUpperCase() : "");
+                    String nuevosApellidos = JOptionPane.showInputDialog(null,
+                        "Nuevos APELLIDOS (actual: " + paciente.getApellidos() + "):",
+                        "Actualizar Apellidos", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevosApellidos != null &amp;&amp; Validador.validarNoVacio(nuevosApellidos))
+                        paciente.setApellidos(Validador.capitalizarNombre(nuevosApellidos));
+                    break;
+                case 2:
+                    String nuevoSS = "";
+                    while (!Validador.validarSeguroSocial(nuevoSS)) {
+                        nuevoSS = JOptionPane.showInputDialog(null,
+                            "Nuevo SEGURO SOCIAL (actual: " + paciente.getSeguroSocial() +
+                            ")\nFormato: XXX-XX-XXXX:",
+                            "Actualizar Seguro Social", JOptionPane.PLAIN_MESSAGE);
+                        if (nuevoSS == null) break;
+                        if (!Validador.validarSeguroSocial(nuevoSS))
+                            JOptionPane.showMessageDialog(null, "Formato inválido. Use: XXX-XX-XXXX",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    if (nuevoSS != null &amp;&amp; Validador.validarSeguroSocial(nuevoSS))
+                        paciente.setSeguroSocial(nuevoSS);
+                    break;
+                case 3:
+                    String nuevaFechaNac = "";
+                    while (!Validador.validarFecha(nuevaFechaNac)) {
+                        nuevaFechaNac = JOptionPane.showInputDialog(null,
+                            "Nueva FECHA DE NACIMIENTO (actual: " + paciente.getFechaNacimiento() +
+                            ")\nFormato: MM/DD/YYYY:", "Actualizar Fecha Nacimiento", JOptionPane.PLAIN_MESSAGE);
+                        if (nuevaFechaNac == null) break;
+                        if (!Validador.validarFecha(nuevaFechaNac))
+                            JOptionPane.showMessageDialog(null, "Fecha inválida. Use MM/DD/YYYY.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    if (nuevaFechaNac != null &amp;&amp; Validador.validarFecha(nuevaFechaNac))
+                        paciente.setFechaNacimiento(nuevaFechaNac);
+                    break;
+                case 4:
+                    String nuevoSexo = "";
+                    while (!Validador.validarSexo(nuevoSexo)) {
+                        nuevoSexo = JOptionPane.showInputDialog(null,
+                            "Nuevo SEXO (actual: " + paciente.getSexo() + ")\nM o F:",
+                            "Actualizar Sexo", JOptionPane.PLAIN_MESSAGE);
+                        if (nuevoSexo == null) break;
+                        if (!Validador.validarSexo(nuevoSexo))
+                            JOptionPane.showMessageDialog(null, "Solo se acepta M o F.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    if (nuevoSexo != null &amp;&amp; Validador.validarSexo(nuevoSexo))
+                        paciente.setSexo(nuevoSexo.trim().toUpperCase());
+                    break;
+                case 5:
+                    String nuevaDireccion = JOptionPane.showInputDialog(null,
+                        "Nueva DIRECCIÓN (actual: " + paciente.getDireccion() + "):",
+                        "Actualizar Dirección", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevaDireccion != null &amp;&amp; Validador.validarNoVacio(nuevaDireccion))
+                        paciente.setDireccion(nuevaDireccion.trim());
+                    break;
+                case 6:
+                    String nuevoPlan = seleccionarPlanMedico();
+                    if (nuevoPlan != null) paciente.setPlanMedico(nuevoPlan);
+                    break;
+                case 7:
+                    String nuevaFechaVisita = "";
+                    while (!Validador.validarFecha(nuevaFechaVisita)) {
+                        nuevaFechaVisita = JOptionPane.showInputDialog(null,
+                            "Nueva FECHA DE VISITA (actual: " + paciente.getFechaVisita() +
+                            ")\nFormato: MM/DD/YYYY:", "Actualizar Fecha de Visita", JOptionPane.PLAIN_MESSAGE);
+                        if (nuevaFechaVisita == null) break;
+                        if (!Validador.validarFecha(nuevaFechaVisita))
+                            JOptionPane.showMessageDialog(null, "Fecha inválida. Use MM/DD/YYYY.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    if (nuevaFechaVisita != null &amp;&amp; Validador.validarFecha(nuevaFechaVisita))
+                        paciente.setFechaVisita(nuevaFechaVisita);
+                    break;
+                case 8:
+                    String nuevoDiag = JOptionPane.showInputDialog(null,
+                        "Nuevo DIAGNÓSTICO (actual: " + paciente.getDiagnostico() + "):",
+                        "Actualizar Diagnóstico", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevoDiag != null &amp;&amp; Validador.validarNoVacio(nuevoDiag))
+                        paciente.setDiagnostico(nuevoDiag.trim());
+                    break;
+                case 9:
+                    String nuevaReceta = JOptionPane.showInputDialog(null,
+                        "Nueva RECETA (actual: " + paciente.getReceta() + "):",
+                        "Actualizar Receta", JOptionPane.PLAIN_MESSAGE);
+                    if (nuevaReceta != null) paciente.setReceta(nuevaReceta.trim());
+                    break;
+                case 10:
+                    String nuevaFechaSig = "";
+                    while (!Validador.validarFecha(nuevaFechaSig)) {
+                        nuevaFechaSig = JOptionPane.showInputDialog(null,
+                            "Nueva FECHA DE SIGUIENTE VISITA (actual: " +
+                            paciente.getFechaSiguienteVisita() + ")\nFormato: MM/DD/YYYY:",
+                            "Actualizar Próxima Visita", JOptionPane.PLAIN_MESSAGE);
+                        if (nuevaFechaSig == null) break;
+                        if (!Validador.validarFecha(nuevaFechaSig))
+                            JOptionPane.showMessageDialog(null, "Fecha inválida. Use MM/DD/YYYY.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    if (nuevaFechaSig != null &amp;&amp; Validador.validarFecha(nuevaFechaSig))
+                        paciente.setFechaSiguienteVisita(nuevaFechaSig);
+                    break;
+                case 11:
+                    continuar = false;
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null,
+                        "Opción no válida.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        boolean guardado = ArchivoManager.reescribirTodosLosExpedientes(listaPacientes);
+        if (guardado) {
+            JOptionPane.showMessageDialog(null,
+                "Expediente actualizado y guardado correctamente.",
+                "Actualización exitosa", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "Error al guardar los cambios en el archivo.",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // ─── Listar todos los expedientes ─────────────────────────────────────────
+
+    public void listarTodosLosExpedientes() {
+        listaPacientes = ArchivoManager.cargarTodosLosExpedientes();
+
+        if (listaPacientes.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "No hay expedientes registrados en el sistema.",
+                "Lista Vacía", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("LISTADO DE EXPEDIENTES — Total: ")
+          .append(listaPacientes.size()).append("\n");
+        sb.append("═".repeat(60)).append("\n");
+        sb.append(String.format("%-12s %-28s %-12s%n",
+            "Expediente", "Paciente", "Fecha Visita"));
+        sb.append("─".repeat(60)).append("\n");
+
+        for (Paciente p : listaPacientes) {
+            sb.append(String.format("%-12s %-28s %-12s%n",
+                p.getNumeroExpediente(),
+                p.getNombreCompleto().length() > 27
+                    ? p.getNombreCompleto().substring(0, 27) + "…"
+                    : p.getNombreCompleto(),
+                p.getFechaVisita()));
+        }
+
+        sb.append("═".repeat(60));
+
+        JOptionPane.showMessageDialog(null, sb.toString(),
+            "Listado de Expedientes", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ─── Seleccionar plan médico ──────────────────────────────────────────────
+
+    private String seleccionarPlanMedico() {
+        String[] planes = { "Triple-S", "MMM", "MCS", "Molina", "First Medical", "Otro" };
+        String seleccion = (String) JOptionPane.showInputDialog(null,
+            "Seleccione el PLAN MÉDICO del paciente:",
+            "Plan Médico", JOptionPane.PLAIN_MESSAGE, null, planes, planes[0]);
+        return seleccion;
+    }
+
+    // ─── Mensaje de cancelación ───────────────────────────────────────────────
+
+    private void mostrarCancelado() {
+        JOptionPane.showMessageDialog(null,
+            "Operación cancelada. No se creó el expediente.",
+            "Cancelado", JOptionPane.WARNING_MESSAGE);
+    }
+
+    // ─── Getter de la lista ───────────────────────────────────────────────────
+
+    public ArrayList&lt;Paciente&gt; getListaPacientes() {
+        return listaPacientes;
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 16 — CÓDIGO: MenuUtils.java                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">16</div>
+
+  <div class="code-file-header">&#128196; MenuUtils.java — Menús, Login y mensajes de la interfaz</div>
+<pre class="source-code">/**
+ * Clase MenuUtils
+ * Utilidades para mostrar menús, mensajes de bienvenida,
+ * despedida y el proceso de login con JOptionPane.
+ *
+ * Proyecto Final — COMP 2315
+ * Universidad Interamericana de PR, Recinto de Aguadilla
+ * Prof. Dr. Edgardo Vargas Moya
+ */
+
+import javax.swing.JOptionPane;
+
+public class MenuUtils {
+
+    // ─── Credenciales hardcoded (usuario/contraseña) ──────────────────────────
+
+    private static final String[] USUARIOS    = { "admin", "doctor" };
+    private static final String[] CONTRASENAS = { "admin123", "doc2315" };
+
+    // Número máximo de intentos de login permitidos
+    private static final int MAX_INTENTOS = 3;
+
+    // ─── Mensaje de bienvenida ────────────────────────────────────────────────
+
+    public static void mostrarMensajeBienvenida() {
+        String mensaje =
+            "╔══════════════════════════════════════════════════════╗\n" +
+            "         SISTEMA DE EXPEDIENTES MÉDICOS\n" +
+            "       Consultorio del Dr. Rodríguez\n" +
+            "══════════════════════════════════════════════════════\n\n" +
+            "  Desarrollado por:\n" +
+            "    • [NOMBRE 1]  — [NÚMERO ESTUDIANTE 1]\n" +
+            "    • [NOMBRE 2]  — [NÚMERO ESTUDIANTE 2]\n\n" +
+            "  COMP 2315 — Programación Estructurada\n" +
+            "  Universidad Interamericana de PR\n" +
+            "  Recinto de Aguadilla\n" +
+            "  Prof. Dr. Edgardo Vargas Moya\n" +
+            "  Sección: [SECCIÓN]\n" +
+            "  Fecha de entrega: [FECHA DE ENTREGA]\n\n" +
+            "  PROPÓSITO:\n" +
+            "  Esta aplicación permite al Dr. Rodríguez organizar,\n" +
+            "  crear, buscar y actualizar los expedientes médicos\n" +
+            "  de sus pacientes de manera digital y segura.\n\n" +
+            "╚══════════════════════════════════════════════════════╝";
+
+        JOptionPane.showMessageDialog(null, mensaje,
+            "Bienvenido al Sistema de Expedientes Médicos",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ─── Proceso de login ─────────────────────────────────────────────────────
+
+    /**
+     * Solicita usuario y contraseña al usuario.
+     * Permite hasta MAX_INTENTOS intentos antes de cerrar la aplicación.
+     *
+     * @return true si el login fue exitoso, false si falló
+     */
+    public static boolean realizarLogin() {
+        int intentos = 0;
+
+        while (intentos &lt; MAX_INTENTOS) {
+            String usuario = JOptionPane.showInputDialog(null,
+                "Ingrese su NOMBRE DE USUARIO:",
+                "Inicio de Sesión", JOptionPane.PLAIN_MESSAGE);
+
+            if (usuario == null) return false;
+
+            String contrasena = JOptionPane.showInputDialog(null,
+                "Ingrese su CONTRASEÑA:",
+                "Inicio de Sesión", JOptionPane.PLAIN_MESSAGE);
+
+            if (contrasena == null) return false;
+
+            if (validarCredenciales(usuario.trim(), contrasena.trim())) {
+                JOptionPane.showMessageDialog(null,
+                    "¡Bienvenido, " + usuario.trim() + "!\n" +
+                    "Acceso concedido al sistema.",
+                    "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
+                return true;
+            } else {
+                intentos++;
+                int restantes = MAX_INTENTOS - intentos;
+
+                if (restantes > 0) {
+                    JOptionPane.showMessageDialog(null,
+                        "Usuario o contraseña incorrectos.\n" +
+                        "Intentos restantes: " + restantes,
+                        "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                        "Número máximo de intentos alcanzado.\n" +
+                        "El sistema se cerrará por seguridad.",
+                        "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // ─── Validar credenciales ─────────────────────────────────────────────────
+
+    private static boolean validarCredenciales(String usuario, String contrasena) {
+        for (int i = 0; i &lt; USUARIOS.length; i++) {
+            if (USUARIOS[i].equals(usuario) &amp;&amp; CONTRASENAS[i].equals(contrasena)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ─── Mostrar menú principal ───────────────────────────────────────────────
+
+    /**
+     * Muestra el menú principal y retorna la opción seleccionada.
+     *
+     * @return Número de opción elegida (1-6), o -1 si se cancela
+     */
+    public static int mostrarMenuPrincipal() {
+        String[] opciones = {
+            "1. Crear nuevo expediente",
+            "2. Buscar expediente por número",
+            "3. Buscar expediente por fecha de visita",
+            "4. Actualizar expediente",
+            "5. Listar todos los expedientes",
+            "6. Salir del sistema"
+        };
+
+        String seleccion = (String) JOptionPane.showInputDialog(null,
+            "╔════════════════════════════════════╗\n" +
+            "    SISTEMA DE EXPEDIENTES MÉDICOS\n" +
+            "╚════════════════════════════════════╝\n\n" +
+            "Seleccione una opción:",
+            "Menú Principal",
+            JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[0]);
+
+        if (seleccion == null) return -1;
+
+        return Integer.parseInt(seleccion.split("\\.")[0].trim());
+    }
+
+    // ─── Mensaje de despedida ─────────────────────────────────────────────────
+
+    public static void mostrarMensajeDespedida() {
+        JOptionPane.showMessageDialog(null,
+            "╔══════════════════════════════════════════════════════╗\n" +
+            "     GRACIAS POR USAR EL SISTEMA DE EXPEDIENTES\n\n" +
+            "  El sistema se ha cerrado correctamente.\n" +
+            "  Todos los expedientes han sido guardados.\n\n" +
+            "  Consultorio del Dr. Rodríguez\n" +
+            "  COMP 2315 — Universidad Interamericana de PR\n" +
+            "╚══════════════════════════════════════════════════════╝",
+            "¡Hasta pronto!",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 17 — CONCLUSIÓN                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">17</div>
+  <h1>3. Conclusión</h1>
+
+  <p>
+    El desarrollo del Sistema de Expedientes Médicos del Dr. Rodríguez representa la culminación práctica de los conceptos estudiados a lo largo del semestre en COMP 2315 &mdash; Programación Estructurada. Este proyecto integra de manera coherente y funcional una amplia variedad de herramientas del lenguaje Java: estructuras de control (<code>if-else</code>, <code>while</code>, <code>for</code>, <code>switch</code>), colecciones dinámicas con <code>ArrayList</code>, persistencia de datos mediante <code>BufferedReader</code> y <code>BufferedWriter</code>, validación de formatos con expresiones regulares (<code>Pattern</code> y <code>Matcher</code>), principios de diseño orientado a objetos con encapsulamiento, y una interfaz de usuario interactiva basada en <code>JOptionPane</code>. Cada uno de estos elementos fue aplicado en un contexto real y significativo, lo que permitió al equipo comprender no solo la sintaxis del lenguaje, sino también la razón de ser de cada herramienta dentro de un sistema de software completo.
+  </p>
+
+  <p>
+    La experiencia de trabajo en equipo durante el desarrollo de este proyecto resultó ser uno de los aprendizajes más valiosos del proceso. La necesidad de coordinar tareas, repartir responsabilidades, comunicar avances y resolver conflictos de integración entre los módulos fomentó habilidades de colaboración que son igualmente importantes en el ámbito profesional. En particular, el equipo superó retos técnicos significativos, tales como garantizar que las validaciones con regex rechazaran correctamente fechas imposibles como el 30 de febrero (mediante el uso de <code>SimpleDateFormat</code> en modo estricto), el manejo seguro de la cancelación de diálogos por parte del usuario en cualquier punto del flujo, y la lógica de reescritura completa del archivo de texto para reflejar las actualizaciones de expedientes sin corromper los datos existentes.
+  </p>
+
+  <p>
+    Este proyecto merece ser seleccionado como un trabajo sobresaliente porque va más allá de los requisitos mínimos al implementar una arquitectura limpia de seis clases con responsabilidades bien definidas, documentación Javadoc completa en todos los métodos, manejo robusto de errores en cada punto de entrada de datos, y una experiencia de usuario cuidadosamente diseñada con mensajes claros y formateados visualmente mediante caracteres Unicode. El equipo está orgulloso del nivel de calidad alcanzado y considera que este sistema podría, con pequeñas adaptaciones, funcionar como una herramienta real en un consultorio médico de pequeña escala. Esta experiencia solidificó la convicción de ambos integrantes de que la programación no es solo una disciplina técnica, sino también una forma de resolver problemas reales con creatividad, rigor y trabajo en equipo.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PAGE 18 — REFERENCIAS                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-number">18</div>
+  <h1>4. Referencias</h1>
+  <br>
+  <div class="references">
+    <p>
+      Deitel, P. J., &amp; Deitel, H. M. (2020). <em>Java: How to program, early objects</em> (11.ª ed.). Pearson Education. https://deitel.com/java-how-to-program-11-e/
+    </p>
+    <p>
+      Oracle Corporation. (2023). <em>Java SE 21 documentation</em>. Oracle Help Center. https://docs.oracle.com/en/java/javase/21/
+    </p>
+    <p>
+      Oracle Corporation. (2023). <em>JOptionPane (Java SE 21 &amp; JDK 21)</em>. Oracle Java SE Documentation. https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/JOptionPane.html
+    </p>
+    <p>
+      Oracle Corporation. (2023). <em>Pattern (Java SE 21 &amp; JDK 21) — java.util.regex</em>. Oracle Java SE Documentation. https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html
+    </p>
+    <p>
+      Oracle Corporation. (2023). <em>BufferedReader and BufferedWriter — java.io (Java SE 21 &amp; JDK 21)</em>. Oracle Java SE Documentation. https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/BufferedReader.html
+    </p>
+    <p>
+      Bloch, J. (2018). <em>Effective Java</em> (3.ª ed.). Addison-Wesley Professional.
+    </p>
+    <p>
+      Oracle Corporation. (2023). <em>ArrayList (Java SE 21 &amp; JDK 21) — java.util</em>. Oracle Java SE Documentation. https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presentación — Sistema de Expedientes Médicos del Dr. Rodríguez</title>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue-dark:   #0d2b4e;
+      --blue-mid:    #1a4a7a;
+      --blue-light:  #2e6da4;
+      --blue-accent: #4a9fd4;
+      --gold:        #f0c040;
+      --white:       #ffffff;
+      --off-white:   #f7f9fc;
+      --gray-light:  #e8eef5;
+      --gray-mid:    #b0c0d0;
+      --text-dark:   #1a1a2e;
+      --text-body:   #2c3e50;
+      --green:       #27ae60;
+      --red:         #c0392b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 18px;
+      background: #0a1628;
+      color: var(--text-body);
+    }
+
+    /* ── Navigation bar ─────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(13, 43, 78, 0.97);
+      backdrop-filter: blur(6px);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--blue-accent);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    nav .nav-title {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    nav .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    nav a {
+      color: var(--gray-mid);
+      text-decoration: none;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: var(--white);
+      border-color: var(--blue-accent);
+      background: rgba(74, 159, 212, 0.15);
+    }
+
+    /* ── Slide Container ────────────────────────────────────────────────────── */
+    .slides-container {
+      padding-top: 70px;
+    }
+
+    /* ── Slide base ─────────────────────────────────────────────────────────── */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border-bottom: 4px solid var(--blue-dark);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+      color: var(--white);
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--blue-accent);
+      flex-shrink: 0;
+    }
+
+    .slide-header .slide-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+
+    .slide-number-badge {
+      background: var(--blue-accent);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: 20px;
+    }
+
+    /* Slide Body */
+    .slide-body {
+      flex: 1;
+      padding: 40px 60px;
+      background: var(--off-white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ── Cover slide (Slide 1) ──────────────────────────────────────────────── */
+    .slide.cover {
+      background: linear-gradient(160deg, var(--blue-dark) 0%, #0a1e38 50%, #061525 100%);
+    }
+
+    .slide.cover .slide-body {
+      background: transparent;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 50px 60px;
+      gap: 28px;
+    }
+
+    .cover-logo {
+      font-size: 52px;
+      margin-bottom: 4px;
+    }
+
+    .cover-institution {
+      color: var(--gray-mid);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .cover-title {
+      color: var(--white);
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.2;
+      max-width: 800px;
+    }
+
+    .cover-title span {
+      color: var(--gold);
+    }
+
+    .cover-subtitle {
+      color: var(--blue-accent);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .cover-divider {
+      width: 80px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .cover-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 40px;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .cover-info-item {
+      text-align: center;
+    }
+
+    .cover-info-label {
+      color: var(--gray-mid);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .cover-info-value {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* ── Closing slide ──────────────────────────────────────────────────────── */
+    .slide.closing {
+      background: linear-gradient(160deg, var(--blue-dark) 0%, #061525 100%);
+    }
+
+    .slide.closing .slide-body {
+      background: transparent;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 24px;
+    }
+
+    .closing-icon { font-size: 64px; }
+
+    .closing-title {
+      color: var(--gold);
+      font-size: 42px;
+      font-weight: 800;
+    }
+
+    .closing-subtitle {
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .closing-team {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .closing-member {
+      background: rgba(74, 159, 212, 0.15);
+      border: 1px solid var(--blue-accent);
+      border-radius: 12px;
+      padding: 16px 28px;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .closing-member .member-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .closing-member .member-id {
+      font-size: 13px;
+      color: var(--gray-mid);
+      margin-top: 4px;
+    }
+
+    .closing-thanks {
+      color: var(--gray-mid);
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    /* ── Bullet lists ───────────────────────────────────────────────────────── */
+    ul.slide-bullets {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    ul.slide-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 19px;
+      line-height: 1.4;
+      color: var(--text-body);
+    }
+
+    ul.slide-bullets li::before {
+      content: "▶";
+      color: var(--blue-accent);
+      font-size: 12px;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    ul.slide-bullets li strong {
+      color: var(--blue-dark);
+    }
+
+    ul.slide-bullets.compact li { font-size: 17px; gap: 10px; }
+    ul.slide-bullets.compact li::before { font-size: 10px; }
+
+    /* ── Two-column layout ──────────────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .two-col-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Cards ──────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 10px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--blue-mid);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-light);
+    }
+
+    /* ── Class architecture cards ───────────────────────────────────────────── */
+    .class-card {
+      background: var(--white);
+      border-left: 5px solid var(--blue-accent);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: transform 0.15s;
+    }
+
+    .class-card:hover { transform: translateX(4px); }
+
+    .class-card-name {
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 4px;
+    }
+
+    .class-card-desc {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .class-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* ── Field table ────────────────────────────────────────────────────────── */
+    table.fields-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+    }
+
+    table.fields-table thead tr th {
+      background: var(--blue-dark);
+      color: var(--white);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    table.fields-table tbody tr td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--gray-light);
+      vertical-align: top;
+    }
+
+    table.fields-table tbody tr:last-child td { border-bottom: none; }
+    table.fields-table tbody tr:nth-child(even) td { background: var(--gray-light); }
+
+    .field-name {
+      font-family: "Courier New", monospace;
+      font-weight: 700;
+      color: var(--blue-mid);
+      font-size: 14px;
+    }
+
+    .field-format {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    /* ── Login demo ─────────────────────────────────────────────────────────── */
+    .flow-box {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 10px;
+      padding: 20px 26px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .step-num {
+      background: var(--blue-mid);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 14px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 17px;
+      line-height: 1.4;
+      padding-top: 4px;
+    }
+
+    .step-sub {
+      font-size: 14px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    .screenshot-placeholder {
+      border: 2px dashed var(--gray-mid);
+      background: var(--gray-light);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      color: #888;
+      font-size: 15px;
+      font-style: italic;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 160px;
+    }
+
+    .screenshot-placeholder .ph-icon { font-size: 36px; }
+
+    /* ── Concept tags ───────────────────────────────────────────────────────── */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .concept-chip {
+      background: var(--white);
+      border: 2px solid var(--blue-light);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    }
+
+    .concept-chip .chip-icon { font-size: 28px; margin-bottom: 6px; }
+    .concept-chip .chip-label { font-size: 16px; font-weight: 700; color: var(--blue-dark); }
+    .concept-chip .chip-detail { font-size: 13px; color: #666; margin-top: 4px; }
+
+    /* ── Challenge cards ────────────────────────────────────────────────────── */
+    .challenge-item {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .challenge-problem {
+      background: #fdf0f0;
+      border-left: 5px solid var(--red);
+      padding: 14px 18px;
+    }
+
+    .challenge-solution {
+      background: #f0fdf4;
+      border-left: 5px solid var(--green);
+      padding: 14px 18px;
+    }
+
+    .challenge-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .challenge-problem .challenge-label { color: var(--red); }
+    .challenge-solution .challenge-label { color: var(--green); }
+
+    .challenge-text { font-size: 16px; line-height: 1.4; }
+
+    /* ── Conclusion slide ───────────────────────────────────────────────────── */
+    .conclusion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .conclusion-block {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .conclusion-block .block-icon { font-size: 30px; margin-bottom: 8px; }
+    .conclusion-block .block-title { font-size: 16px; font-weight: 700; color: var(--blue-dark); margin-bottom: 8px; }
+    .conclusion-block .block-text { font-size: 16px; color: #444; line-height: 1.5; }
+
+    .highlight-box {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      color: var(--white);
+      border-radius: 12px;
+      padding: 24px 30px;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1.4;
+      grid-column: 1 / -1;
+    }
+
+    /* ── Code inline ────────────────────────────────────────────────────────── */
+    code {
+      font-family: "Courier New", monospace;
+      background: #e8f0fe;
+      color: #1a3a8a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    pre.slide-code {
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    /* ── Tech badge ─────────────────────────────────────────────────────────── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .tech-badge {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.09);
+      border-top: 4px solid var(--blue-accent);
+      transition: transform 0.15s;
+    }
+
+    .tech-badge:hover { transform: translateY(-3px); }
+    .tech-badge .tech-icon { font-size: 32px; margin-bottom: 10px; }
+    .tech-badge .tech-name { font-size: 17px; font-weight: 700; color: var(--blue-dark); }
+    .tech-badge .tech-desc { font-size: 13px; color: #666; margin-top: 6px; line-height: 1.4; }
+
+    /* ── Section label ──────────────────────────────────────────────────────── */
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--blue-light);
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-light);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .slide-header { padding: 20px 24px; }
+      .slide-header .slide-title { font-size: 20px; }
+      .slide-body { padding: 26px 24px; }
+      .two-col, .two-col-3, .class-cards-grid, .conclusion-grid { grid-template-columns: 1fr; }
+      .cover-info-grid { grid-template-columns: 1fr; }
+      .concept-grid { grid-template-columns: 1fr 1fr; }
+      nav .nav-title { display: none; }
+    }
+
+    /* ── Print ──────────────────────────────────────────────────────────────── */
+    @media print {
+      nav { display: none; }
+      .slides-container { padding-top: 0; }
+      .slide { page-break-after: always; min-height: unset; }
+      .slide-body { min-height: 80vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- NAVIGATION                                                               -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-title">Sistema de Expedientes Médicos — COMP 2315</div>
+  <div class="nav-links">
+    <a href="#slide-1">Portada</a>
+    <a href="#slide-2">Sistema</a>
+    <a href="#slide-3">Tecnologías</a>
+    <a href="#slide-4">Arquitectura</a>
+    <a href="#slide-5">Campos</a>
+    <a href="#slide-6">Login</a>
+    <a href="#slide-7">Crear</a>
+    <a href="#slide-8">Buscar</a>
+    <a href="#slide-9">Conceptos</a>
+    <a href="#slide-10">Retos</a>
+    <a href="#slide-11">Conclusión</a>
+    <a href="#slide-12">Cierre</a>
+  </div>
+</nav>
+
+<div class="slides-container">
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 1 — PORTADA                                                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide cover" id="slide-1">
+  <div class="slide-body">
+    <div class="cover-logo">🏥</div>
+    <div class="cover-institution">Universidad Interamericana de Puerto Rico — Recinto de Aguadilla</div>
+    <div class="cover-title">Sistema de Expedientes Médicos<br><span>del Dr. Rodríguez</span></div>
+    <div class="cover-subtitle">Proyecto Final — COMP 2315</div>
+    <div class="cover-divider"></div>
+    <div class="cover-info-grid">
+      <div class="cover-info-item">
+        <div class="cover-info-label">Integrante 1</div>
+        <div class="cover-info-value">[NOMBRE 1]</div>
+        <div style="color:#aaa;font-size:13px;margin-top:2px;">[NÚMERO ESTUDIANTE 1]</div>
+      </div>
+      <div class="cover-info-item">
+        <div class="cover-info-label">Integrante 2</div>
+        <div class="cover-info-value">[NOMBRE 2]</div>
+        <div style="color:#aaa;font-size:13px;margin-top:2px;">[NÚMERO ESTUDIANTE 2]</div>
+      </div>
+      <div class="cover-info-item">
+        <div class="cover-info-label">Curso y Sección</div>
+        <div class="cover-info-value">COMP 2315 — [SECCIÓN]</div>
+      </div>
+      <div class="cover-info-item">
+        <div class="cover-info-label">Profesor</div>
+        <div class="cover-info-value">Dr. Edgardo Vargas Moya</div>
+      </div>
+    </div>
+    <div style="color:#667;font-size:14px;margin-top:8px;">Fecha de entrega: [FECHA DE ENTREGA] &nbsp;|&nbsp; 2025</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 2 — ¿QUÉ ES EL SISTEMA?                                           -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-header">
+    <div class="slide-title">¿Qué es el Sistema de Expedientes Médicos?</div>
+    <div class="slide-number-badge">Diapositiva 2 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Propósito del sistema</div>
+        <ul class="slide-bullets">
+          <li><strong>Gestión digital</strong> de expedientes médicos del consultorio del Dr. Rodríguez</li>
+          <li><strong>Reemplaza</strong> el manejo manual en papel por un sistema organizado y persistente</li>
+          <li><strong>Centraliza</strong> la información clínica de todos los pacientes en un solo archivo de datos</li>
+          <li><strong>Permite</strong> crear, buscar, actualizar y listar expedientes en segundos</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">¿Quién lo usa y qué problema resuelve?</div>
+        <ul class="slide-bullets">
+          <li><strong>Usuario:</strong> El Dr. Rodríguez y su personal autorizado</li>
+          <li><strong>Problema:</strong> Registros dispersos, sin formato uniforme, ni validaciones</li>
+          <li><strong>Solución:</strong> Interfaz guiada con <code>JOptionPane</code>, validaciones automáticas y datos guardados en archivo de texto</li>
+          <li><strong>Acceso seguro</strong> mediante login con control de intentos fallidos</li>
+        </ul>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card" style="margin-top:10px;">
+      <div class="card-title">Funcionalidades Principales</div>
+      <div class="two-col-3">
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:30px;margin-bottom:6px;">🔐</div>
+          <strong style="color:var(--blue-dark);">Login Seguro</strong>
+          <div style="font-size:14px;color:#666;margin-top:4px;">Hasta 3 intentos con usuarios en arreglos paralelos</div>
+        </div>
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:30px;margin-bottom:6px;">📋</div>
+          <strong style="color:var(--blue-dark);">CRUD Completo</strong>
+          <div style="font-size:14px;color:#666;margin-top:4px;">Crear, Buscar, Actualizar y Listar expedientes</div>
+        </div>
+        <div style="text-align:center;padding:12px;">
+          <div style="font-size:30px;margin-bottom:6px;">💾</div>
+          <strong style="color:var(--blue-dark);">Persistencia</strong>
+          <div style="font-size:14px;color:#666;margin-top:4px;">Datos guardados en <code>expedientes.txt</code> delimitado por <code>|</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 3 — TECNOLOGÍAS                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-header">
+    <div class="slide-title">Tecnologías Utilizadas</div>
+    <div class="slide-number-badge">Diapositiva 3 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-label">Lenguaje y bibliotecas del ecosistema Java SE</div>
+    <div class="tech-grid">
+      <div class="tech-badge">
+        <div class="tech-icon">☕</div>
+        <div class="tech-name">Java SE 21</div>
+        <div class="tech-desc">Lenguaje de programación principal. Orientado a objetos, multiplataforma.</div>
+      </div>
+      <div class="tech-badge">
+        <div class="tech-icon">🪟</div>
+        <div class="tech-name">JOptionPane</div>
+        <div class="tech-desc"><code>javax.swing.JOptionPane</code> — Diálogos gráficos interactivos para menús y entrada de datos.</div>
+      </div>
+      <div class="tech-badge">
+        <div class="tech-icon">📂</div>
+        <div class="tech-name">File I/O</div>
+        <div class="tech-desc"><code>BufferedReader</code> y <code>BufferedWriter</code> de <code>java.io</code> para leer y escribir archivos de texto.</div>
+      </div>
+      <div class="tech-badge">
+        <div class="tech-icon">🔎</div>
+        <div class="tech-name">Regex</div>
+        <div class="tech-desc"><code>java.util.regex.Pattern</code> y <code>Matcher</code> para validar formatos de seguro social, fechas y expediente.</div>
+      </div>
+      <div class="tech-badge">
+        <div class="tech-icon">📦</div>
+        <div class="tech-name">ArrayList</div>
+        <div class="tech-desc"><code>java.util.ArrayList&lt;Paciente&gt;</code> — Lista dinámica en memoria de todos los expedientes cargados.</div>
+      </div>
+      <div class="tech-badge">
+        <div class="tech-icon">📅</div>
+        <div class="tech-name">SimpleDateFormat</div>
+        <div class="tech-desc"><code>java.text.SimpleDateFormat</code> en modo estricto para validar que las fechas ingresadas sean reales.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 4 — ARQUITECTURA DEL PROYECTO                                      -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-header">
+    <div class="slide-title">Arquitectura del Proyecto — 6 Clases Java</div>
+    <div class="slide-number-badge">Diapositiva 4 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-label">Separación de responsabilidades — cada clase tiene una función específica</div>
+    <div class="class-cards-grid">
+      <div class="class-card">
+        <div class="class-card-name">Main.java</div>
+        <div class="class-card-desc">Punto de entrada del programa. Orquesta el flujo completo: inicialización, bienvenida, login, menú principal (bucle <code>while</code>) y despedida. Contiene el método <code>main()</code>.</div>
+      </div>
+      <div class="class-card">
+        <div class="class-card-name">Paciente.java</div>
+        <div class="class-card-desc">Modelo de datos. Representa un expediente médico con 13 campos. Implementa <code>Serializable</code>. Contiene getters, setters, <code>toFileString()</code> y <code>fromFileString()</code> para persistencia, y <code>toString()</code> formateado.</div>
+      </div>
+      <div class="class-card">
+        <div class="class-card-name">Validador.java</div>
+        <div class="class-card-desc">Capa de validación de datos. Usa <code>Pattern</code> y <code>Matcher</code> para validar seguro social (<code>XXX-XX-XXXX</code>), fechas (<code>MM/DD/YYYY</code>), número de expediente, sexo y texto no vacío. También capitaliza nombres.</div>
+      </div>
+      <div class="class-card">
+        <div class="class-card-name">ArchivoManager.java</div>
+        <div class="class-card-desc">Capa de persistencia. Maneja lectura y escritura del archivo <code>data/expedientes.txt</code> usando <code>BufferedReader</code> y <code>BufferedWriter</code>. Métodos: <code>guardarExpediente()</code>, <code>cargarTodos()</code>, <code>reescribirTodos()</code>.</div>
+      </div>
+      <div class="class-card">
+        <div class="class-card-name">ExpedienteManager.java</div>
+        <div class="class-card-desc">Lógica de negocio CRUD. Maneja el <code>ArrayList&lt;Paciente&gt;</code> en memoria. Métodos: <code>crearExpediente()</code>, <code>buscarPorNumero()</code>, <code>buscarPorFechaVisita()</code>, <code>actualizarExpediente()</code>, <code>listarTodos()</code>.</div>
+      </div>
+      <div class="class-card">
+        <div class="class-card-name">MenuUtils.java</div>
+        <div class="class-card-desc">Interfaz de usuario. Maneja el login con arreglos paralelos de usuarios/contraseñas, límite de 3 intentos, menú principal con 6 opciones usando <code>JOptionPane.showInputDialog()</code> con arreglo de opciones, y mensajes de bienvenida/despedida.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 5 — CAMPOS DEL EXPEDIENTE                                          -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="slide-header">
+    <div class="slide-title">Campos del Expediente Médico</div>
+    <div class="slide-number-badge">Diapositiva 5 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-label">Cada expediente almacena 13 campos con formatos específicos y validaciones</div>
+    <table class="fields-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Campo</th>
+          <th>Atributo Java</th>
+          <th>Formato / Validación</th>
+          <th>Ejemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>No. Expediente</td>
+          <td><span class="field-name">numeroExpediente</span></td>
+          <td><span class="field-format">EXP-A####</span> (generado automáticamente)</td>
+          <td><span class="field-format">EXP-A0001</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Nombre</td>
+          <td><span class="field-name">nombre</span></td>
+          <td>Texto no vacío, capitalizado automáticamente</td>
+          <td>Juan</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Inicial</td>
+          <td><span class="field-name">inicial</span></td>
+          <td>Una letra, opcional (puede estar vacío)</td>
+          <td>A</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Apellidos</td>
+          <td><span class="field-name">apellidos</span></td>
+          <td>Texto no vacío, capitalizado automáticamente</td>
+          <td>García López</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Seguro Social</td>
+          <td><span class="field-name">seguroSocial</span></td>
+          <td><span class="field-format">XXX-XX-XXXX</span> (solo dígitos y guiones)</td>
+          <td><span class="field-format">123-45-6789</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Fecha Nacimiento</td>
+          <td><span class="field-name">fechaNacimiento</span></td>
+          <td><span class="field-format">MM/DD/YYYY</span> — fecha real validada</td>
+          <td><span class="field-format">05/15/1985</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Sexo</td>
+          <td><span class="field-name">sexo</span></td>
+          <td>Solo <strong>M</strong> o <strong>F</strong> (sin importar mayúsculas)</td>
+          <td>M</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Dirección</td>
+          <td><span class="field-name">direccion</span></td>
+          <td>Texto no vacío (Calle, Ciudad, Estado, Zip)</td>
+          <td>123 Calle Luna, Aguadilla, PR 00603</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Plan Médico</td>
+          <td><span class="field-name">planMedico</span></td>
+          <td>Selección de lista: Triple-S, MMM, MCS, Molina, First Medical, Otro</td>
+          <td>Triple-S</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Fecha de Visita</td>
+          <td><span class="field-name">fechaVisita</span></td>
+          <td><span class="field-format">MM/DD/YYYY</span> — fecha real validada</td>
+          <td><span class="field-format">03/20/2025</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Diagnóstico</td>
+          <td><span class="field-name">diagnostico</span></td>
+          <td>Texto libre no vacío</td>
+          <td>Hipertensión arterial leve</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Receta</td>
+          <td><span class="field-name">receta</span></td>
+          <td>Texto libre (puede estar vacío)</td>
+          <td>Losartán 50mg, 1 vez al día</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Próxima Visita</td>
+          <td><span class="field-name">fechaSiguienteVisita</span></td>
+          <td><span class="field-format">MM/DD/YYYY</span> — fecha real validada</td>
+          <td><span class="field-format">06/20/2025</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:13px;color:#888;margin-top:12px;">Los campos se almacenan en <code>data/expedientes.txt</code> separados por el caracter <code>|</code> (pipe), una línea por expediente.</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 6 — DEMOSTRACIÓN: LOGIN                                            -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-6">
+  <div class="slide-header">
+    <div class="slide-title">Demostración: Proceso de Login</div>
+    <div class="slide-number-badge">Diapositiva 6 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Flujo del proceso de autenticación</div>
+        <div class="flow-box">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="step-num">1</div>
+              <div>
+                <div class="step-text">Se muestra el <strong>mensaje de bienvenida</strong> con información del sistema</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">2</div>
+              <div>
+                <div class="step-text"><code>JOptionPane.showInputDialog()</code> solicita el <strong>nombre de usuario</strong></div>
+                <div class="step-sub">Usuarios válidos: <code>admin</code>, <code>doctor</code></div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">3</div>
+              <div>
+                <div class="step-text">Segundo diálogo solicita la <strong>contraseña</strong></div>
+                <div class="step-sub">Contraseñas: <code>admin123</code>, <code>doc2315</code></div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">4</div>
+              <div>
+                <div class="step-text">Bucle <code>for</code> compara contra <strong>arreglos paralelos</strong> de credenciales</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">5</div>
+              <div>
+                <div class="step-text">Si <strong>exitoso</strong>: muestra "¡Bienvenido!" y abre el menú</div>
+                <div class="step-sub">Si falla: muestra intentos restantes. Al agotar 3 intentos: cierra el sistema.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <ul class="slide-bullets compact">
+          <li>Máximo <strong>3 intentos</strong> permitidos (constante <code>MAX_INTENTOS = 3</code>)</li>
+          <li>Si el usuario presiona <strong>Cancelar</strong>, el sistema se cierra inmediatamente</li>
+          <li>Soporta múltiples usuarios en los arreglos <code>USUARIOS[]</code> y <code>CONTRASENAS[]</code></li>
+        </ul>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="screenshot-placeholder">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Diálogo de bienvenida con información del sistema ]</div>
+        </div>
+        <div class="screenshot-placeholder">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Diálogo "Ingrese su NOMBRE DE USUARIO" ]</div>
+        </div>
+        <div class="screenshot-placeholder">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Diálogo "Ingrese su CONTRASEÑA" ]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 7 — DEMOSTRACIÓN: CREAR EXPEDIENTE                                 -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-7">
+  <div class="slide-header">
+    <div class="slide-title">Demostración: Crear Nuevo Expediente</div>
+    <div class="slide-number-badge">Diapositiva 7 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Proceso guiado campo a campo</div>
+        <ul class="slide-bullets compact">
+          <li>El sistema solicita cada campo en su propio diálogo <code>JOptionPane</code></li>
+          <li>Cada campo validado con <strong>bucle <code>while</code></strong> — no avanza hasta que el dato sea correcto</li>
+          <li>Nombre y apellidos: <strong>capitalizados automáticamente</strong> con <code>Validador.capitalizarNombre()</code></li>
+          <li>Seguro Social: regex <code>^\d{3}-\d{2}-\d{4}$</code> — rechaza formato incorrecto</li>
+          <li>Fechas: regex + <code>SimpleDateFormat.setLenient(false)</code> — rechaza fechas imposibles (ej: 02/30/2024)</li>
+          <li>Sexo: solo acepta <code>M</code> o <code>F</code> (sin distinción de mayúsculas)</li>
+          <li>Plan Médico: selección de lista con <code>showInputDialog()</code> + arreglo de opciones</li>
+          <li>Número de expediente: <strong>generado automáticamente</strong> en formato <code>EXP-A####</code></li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="section-label">Validaciones aplicadas</div>
+        <div class="card">
+          <div class="card-title">Si el usuario cancela en cualquier paso...</div>
+          <ul class="slide-bullets compact">
+            <li><code>if (campo == null) { mostrarCancelado(); return; }</code></li>
+            <li>Se muestra mensaje "Operación cancelada" y no se crea el expediente</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Al completar todos los campos...</div>
+          <ul class="slide-bullets compact">
+            <li>Crea objeto <code>Paciente</code> con los 13 campos</li>
+            <li>Agrega a <code>ArrayList&lt;Paciente&gt;</code> en memoria</li>
+            <li><code>ArchivoManager.guardarExpediente()</code> escribe en <code>expedientes.txt</code></li>
+            <li>Muestra número asignado: <em>"Expediente creado: EXP-A0001"</em></li>
+          </ul>
+        </div>
+        <div class="screenshot-placeholder">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Diálogos de ingreso de datos del expediente ]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 8 — DEMOSTRACIÓN: BUSCAR Y ACTUALIZAR                              -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-8">
+  <div class="slide-header">
+    <div class="slide-title">Demostración: Buscar y Actualizar Expedientes</div>
+    <div class="slide-number-badge">Diapositiva 8 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <!-- Buscar -->
+      <div>
+        <div class="section-label">Búsqueda de expedientes (Opciones 2 y 3)</div>
+        <div class="card">
+          <div class="card-title">Buscar por Número de Expediente</div>
+          <ul class="slide-bullets compact">
+            <li>Solicita el número en formato <code>EXP-XXXXX</code></li>
+            <li>Recorre el <code>ArrayList</code> con bucle <code>for-each</code></li>
+            <li>Usa <code>equalsIgnoreCase()</code> para comparación insensible a mayúsculas</li>
+            <li>Muestra el expediente completo con <code>p.toString()</code> formateado con Unicode</li>
+            <li>Si no se encuentra: mensaje "No encontrado" con advertencia</li>
+          </ul>
+        </div>
+        <br>
+        <div class="card">
+          <div class="card-title">Buscar por Fecha de Visita</div>
+          <ul class="slide-bullets compact">
+            <li>Valida la fecha ingresada con <code>Validador.validarFecha()</code></li>
+            <li>Recorre la lista y acumula <strong>todos</strong> los pacientes con esa fecha en una nueva <code>ArrayList</code></li>
+            <li>Si hay varios resultados, los muestra <strong>todos</strong> concatenados</li>
+            <li>Indica la cantidad total encontrada en el título del diálogo</li>
+          </ul>
+        </div>
+        <div class="screenshot-placeholder" style="margin-top:14px;">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Resultado de búsqueda con expediente mostrado ]</div>
+        </div>
+      </div>
+
+      <!-- Actualizar -->
+      <div>
+        <div class="section-label">Actualización de expediente (Opción 4)</div>
+        <div class="flow-box">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="step-num">1</div>
+              <div class="step-text">Solicita número de expediente a actualizar</div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">2</div>
+              <div class="step-text">Busca el <code>Paciente</code> en la lista; si no existe, muestra advertencia y regresa</div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">3</div>
+              <div>
+                <div class="step-text">Muestra <strong>submenú de 11 opciones</strong> con <code>showInputDialog()</code> + arreglo</div>
+                <div class="step-sub">Cada opción corresponde a un campo actualizable</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">4</div>
+              <div class="step-text">Estructura <code>switch</code> ejecuta la lógica del campo elegido con su validación correspondiente</div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">5</div>
+              <div class="step-text">Bucle <code>while(continuar)</code> regresa al submenú hasta elegir opción 11</div>
+            </div>
+            <div class="flow-step">
+              <div class="step-num">6</div>
+              <div class="step-text"><code>ArchivoManager.reescribirTodosLosExpedientes()</code> actualiza el archivo completo</div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-placeholder" style="margin-top:14px;">
+          <div class="ph-icon">🖼️</div>
+          <div>[ Captura: Submenú de actualización con las 11 opciones ]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 9 — CONCEPTOS DE COMP 2315 APLICADOS                               -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-9">
+  <div class="slide-header">
+    <div class="slide-title">Conceptos de COMP 2315 Aplicados en el Proyecto</div>
+    <div class="slide-number-badge">Diapositiva 9 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-label">Cada concepto aprendido en clase tiene una aplicación concreta y directa en el sistema</div>
+    <div class="concept-grid">
+      <div class="concept-chip">
+        <div class="chip-icon">🔁</div>
+        <div class="chip-label">Bucle while</div>
+        <div class="chip-detail">Menú principal activo, login con intentos, validación de cada campo hasta que sea correcto</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">🔂</div>
+        <div class="chip-label">Bucle for / for-each</div>
+        <div class="chip-detail">Búsqueda en <code>ArrayList</code>, validación de credenciales, listado de expedientes</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">🔀</div>
+        <div class="chip-label">switch</div>
+        <div class="chip-detail">Menú principal (6 casos) y submenú de actualización (11 casos) en <code>Main.java</code> y <code>ExpedienteManager.java</code></div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">❓</div>
+        <div class="chip-label">if / else</div>
+        <div class="chip-detail">Control de flujo en login, validaciones, detección de cancelación, mensajes condicionales</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">📋</div>
+        <div class="chip-label">ArrayList</div>
+        <div class="chip-detail"><code>ArrayList&lt;Paciente&gt;</code> como estructura de datos dinámica en memoria para todos los expedientes</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">🧩</div>
+        <div class="chip-label">Métodos / Clases</div>
+        <div class="chip-detail">6 clases con responsabilidades separadas; métodos estáticos y de instancia; encapsulamiento con getters/setters</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">💾</div>
+        <div class="chip-label">File I/O</div>
+        <div class="chip-detail"><code>BufferedWriter</code> para guardar/reescribir y <code>BufferedReader</code> para cargar expedientes del archivo <code>.txt</code></div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">🔍</div>
+        <div class="chip-label">Regex</div>
+        <div class="chip-detail"><code>Pattern.compile()</code> y <code>Matcher.matches()</code> para validar SS, fechas y número de expediente con expresiones regulares</div>
+      </div>
+      <div class="concept-chip">
+        <div class="chip-icon">🗃️</div>
+        <div class="chip-label">Arreglos</div>
+        <div class="chip-detail">Arreglos paralelos <code>USUARIOS[]</code> y <code>CONTRASENAS[]</code> para autenticación; arreglos de <code>String</code> para opciones de menú</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 10 — RETOS Y SOLUCIONES                                            -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-10">
+  <div class="slide-header">
+    <div class="slide-title">Retos Encontrados y Soluciones Implementadas</div>
+    <div class="slide-number-badge">Diapositiva 10 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div class="challenge-item">
+        <div class="challenge-problem">
+          <div class="challenge-label">Reto 1</div>
+          <div class="challenge-text"><strong>Validar fechas imposibles</strong> como el 30 de febrero o el 31 de abril que pasan el regex básico pero no son fechas reales</div>
+        </div>
+        <div class="challenge-solution">
+          <div class="challenge-label">Solución</div>
+          <div class="challenge-text">Usar <code>SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy")</code> con <code>sdf.setLenient(false)</code> en modo estricto después del regex. El método <code>sdf.parse()</code> lanza excepción si la fecha no existe realmente.</div>
+        </div>
+      </div>
+
+      <div class="challenge-item">
+        <div class="challenge-problem">
+          <div class="challenge-label">Reto 2</div>
+          <div class="challenge-text"><strong>Manejo seguro de la cancelación</strong> del usuario — si cierra un diálogo <code>JOptionPane</code> en cualquier punto de la creación, el sistema podría quedar en estado inconsistente</div>
+        </div>
+        <div class="challenge-solution">
+          <div class="challenge-label">Solución</div>
+          <div class="challenge-text">Verificar <code>if (campo == null) { mostrarCancelado(); return; }</code> después de <strong>cada</strong> llamada a <code>showInputDialog()</code>. El método <code>return</code> inmediato aborta la creación sin guardar datos parciales.</div>
+        </div>
+      </div>
+
+      <div class="challenge-item">
+        <div class="challenge-problem">
+          <div class="challenge-label">Reto 3</div>
+          <div class="challenge-text"><strong>Actualizar un expediente en el archivo</strong> sin reescribir todo manualmente, y sin que la actualización de un registro corrompa los demás datos guardados</div>
+        </div>
+        <div class="challenge-solution">
+          <div class="challenge-label">Solución</div>
+          <div class="challenge-text">Cargar todos los expedientes en el <code>ArrayList</code> al inicio, modificar el objeto en memoria con los setters de <code>Paciente</code>, y luego llamar <code>reescribirTodosLosExpedientes()</code> que sobreescribe el archivo con <code>FileWriter(path, false)</code>.</div>
+        </div>
+      </div>
+
+      <div class="challenge-item">
+        <div class="challenge-problem">
+          <div class="challenge-label">Reto 4</div>
+          <div class="challenge-text"><strong>Garantizar unicidad</strong> del número de expediente generado automáticamente, especialmente si el archivo ya tenía expedientes de sesiones anteriores con distintos contadores</div>
+        </div>
+        <div class="challenge-solution">
+          <div class="challenge-label">Solución</div>
+          <div class="challenge-text">El método <code>generarNumeroExpediente()</code> usa un bucle <code>do-while</code> que genera candidatos secuenciales (<code>EXP-A0001</code>, <code>EXP-A0002</code>...) y llama a <code>ArchivoManager.existeExpediente()</code> hasta encontrar uno que no esté registrado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 11 — CONCLUSIÓN                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-11">
+  <div class="slide-header">
+    <div class="slide-title">Conclusión — Lo que Aprendimos y por qué Elegir este Proyecto</div>
+    <div class="slide-number-badge">Diapositiva 11 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="conclusion-grid">
+      <div class="conclusion-block">
+        <div class="block-icon">🎓</div>
+        <div class="block-title">Lo que aprendimos</div>
+        <div class="block-text">
+          Aplicar en un contexto real todos los conceptos de COMP 2315: estructuras de control, colecciones, I/O de archivos, regex y orientación a objetos. Comprendimos no solo la <em>sintaxis</em> de Java, sino el <em>por qué</em> de cada herramienta.
+        </div>
+      </div>
+
+      <div class="conclusion-block">
+        <div class="block-icon">🤝</div>
+        <div class="block-title">Trabajo en equipo</div>
+        <div class="block-text">
+          Aprendimos a dividir el trabajo por módulos, comunicar avances, resolver conflictos de integración y revisar el código del compañero. Habilidades tan importantes como la programación misma.
+        </div>
+      </div>
+
+      <div class="conclusion-block">
+        <div class="block-icon">🏗️</div>
+        <div class="block-title">Diseño limpio</div>
+        <div class="block-text">
+          El sistema usa 6 clases con responsabilidades claras, documentación Javadoc completa, manejo robusto de errores en cada punto de entrada, y una UX cuidada con mensajes formateados en Unicode.
+        </div>
+      </div>
+
+      <div class="conclusion-block">
+        <div class="block-icon">🚀</div>
+        <div class="block-title">Más allá del mínimo</div>
+        <div class="block-text">
+          Validaciones de dos niveles (regex + fecha real), generación automática de IDs únicos con <code>do-while</code>, búsqueda múltiple por fecha, submenú de 11 opciones de actualización y persistencia completa.
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        Este sistema podría funcionar como herramienta real en un consultorio de pequeña escala.<br>
+        Estamos orgullosos del nivel de calidad, robustez y organización alcanzado.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 12 — ¿PREGUNTAS? / CIERRE                                          -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="slide closing" id="slide-12">
+  <div class="slide-header" style="background:rgba(13,43,78,0.6);border-color:rgba(74,159,212,0.4);">
+    <div class="slide-title" style="color:var(--gray-mid);">Cierre de la Presentación</div>
+    <div class="slide-number-badge" style="background:rgba(74,159,212,0.4);">Diapositiva 12 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="closing-icon">🙋</div>
+    <div class="closing-title">¿Preguntas?</div>
+    <div class="closing-subtitle">Estamos listos para demostrar el sistema en vivo</div>
+
+    <div class="cover-divider" style="background:var(--blue-accent);margin:0 auto;"></div>
+
+    <div class="closing-team">
+      <div class="closing-member">
+        <div class="member-name">[NOMBRE 1]</div>
+        <div class="member-id">[NÚMERO ESTUDIANTE 1]</div>
+      </div>
+      <div class="closing-member">
+        <div class="member-name">[NOMBRE 2]</div>
+        <div class="member-id">[NÚMERO ESTUDIANTE 2]</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:10px;">
+      <div style="color:var(--gray-mid);font-size:15px;">COMP 2315 — Programación Estructurada &nbsp;|&nbsp; Sección [SECCIÓN]</div>
+      <div style="color:var(--gray-mid);font-size:15px;">Prof. Dr. Edgardo Vargas Moya &nbsp;|&nbsp; Universidad Interamericana de PR, Recinto de Aguadilla</div>
+      <div style="color:var(--gray-mid);font-size:15px;">Fecha de entrega: [FECHA DE ENTREGA] &nbsp;|&nbsp; 2025</div>
+    </div>
+
+    <div class="closing-thanks">¡Gracias por su atención! — <em>Sistema de Expedientes Médicos del Dr. Rodríguez</em></div>
+  </div>
+</section>
+
+</div><!-- end .slides-container -->
+</body>
+</html>

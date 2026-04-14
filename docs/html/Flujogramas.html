@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flujogramas — Sistema de Expedientes Médicos — COMP 2315</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 24px;
+      height: 56px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+      overflow-x: auto;
+    }
+    nav .nav-brand {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      white-space: nowrap;
+      margin-right: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    nav a:hover { background: #1e3a5f; color: #60a5fa; }
+    nav a.active { background: #1d4ed8; color: #fff; }
+
+    /* ===== COVER ===== */
+    .cover {
+      margin-top: 56px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      color: white;
+      padding: 80px 40px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 40%, rgba(37,99,235,0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(245,158,11,0.1) 0%, transparent 50%);
+    }
+    .cover-inner { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(37,99,235,0.3);
+      border: 1px solid rgba(96,165,250,0.4);
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      color: #f8fafc;
+    }
+    .cover h2 {
+      font-size: clamp(14px, 2vw, 20px);
+      font-weight: 400;
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .cover-meta-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px 28px;
+      text-align: center;
+    }
+    .cover-meta-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .cover-meta-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .cover-toc {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cover-toc a {
+      display: block;
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(37,99,235,0.3);
+      color: #93c5fd;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .cover-toc a:hover { background: rgba(37,99,235,0.35); }
+    .cover-toc a span { color: #64748b; font-weight: 400; font-size: 11px; display: block; margin-top: 2px; }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ===== SECTION CARD ===== */
+    .fc-section {
+      margin-bottom: 60px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .fc-header {
+      background: linear-gradient(90deg, #0f172a, #1e293b);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .fc-header-num {
+      width: 36px; height: 36px;
+      background: #2563eb;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .fc-header-text h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.01em;
+    }
+    .fc-header-text p {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .fc-body {
+      padding: 40px 32px;
+      background: #fafafa;
+    }
+
+    /* ===== FLOWCHART SHAPES ===== */
+    .fc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Start/End oval */
+    .shape-se {
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50px;
+      padding: 10px 32px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-width: 120px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .shape-se.start { background: #16a34a; box-shadow: 0 2px 12px rgba(22,163,74,0.4); }
+    .shape-se.end   { background: #dc2626; box-shadow: 0 2px 12px rgba(220,38,38,0.4); }
+
+    /* Process rectangle */
+    .shape-proc {
+      display: flex; align-items: center; justify-content: center;
+      background: #2563eb;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #fff;
+      min-width: 220px;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+      line-height: 1.4;
+    }
+    .shape-proc.wide { max-width: 480px; }
+    .shape-proc.narrow { min-width: 160px; max-width: 280px; }
+
+    /* Sub-process (lighter blue) */
+    .shape-sub {
+      display: flex; align-items: center; justify-content: center;
+      background: #3b82f6;
+      border-radius: 8px;
+      border: 2px dashed #93c5fd;
+      padding: 9px 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      min-width: 200px;
+      max-width: 380px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Decision diamond */
+    .diamond-wrap {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0;
+    }
+    .shape-dec {
+      width: 160px; height: 160px;
+      background: #f59e0b;
+      transform: rotate(45deg);
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(245,158,11,0.4);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .shape-dec.small {
+      width: 130px; height: 130px;
+    }
+    .shape-dec-text {
+      transform: rotate(-45deg);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      padding: 10px;
+      max-width: 115px;
+    }
+    .shape-dec.small .shape-dec-text {
+      max-width: 95px;
+      font-size: 10.5px;
+    }
+
+    /* Arrow */
+    .arrow {
+      display: flex; flex-direction: column; align-items: center;
+      font-size: 18px; color: #94a3b8;
+      line-height: 1;
+      margin: 2px 0;
+      user-select: none;
+    }
+    .arrow-line {
+      width: 2px; height: 18px;
+      background: #cbd5e1;
+    }
+    .arrow-head { font-size: 14px; color: #94a3b8; margin-top: -4px; }
+
+    .arrow-h {
+      display: flex; flex-direction: row; align-items: center;
+      font-size: 12px; color: #94a3b8;
+      user-select: none;
+      gap: 0;
+    }
+    .arrow-h-line {
+      height: 2px; width: 24px;
+      background: #cbd5e1;
+    }
+    .arrow-h-head { font-size: 10px; color: #94a3b8; }
+
+    /* Branch layout */
+    .branch-row {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 32px;
+      margin: 0;
+    }
+    .branch-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .branch-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748b;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 100px;
+      padding: 2px 8px;
+      margin-bottom: 2px;
+    }
+    .branch-label.si  { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
+    .branch-label.no  { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
+
+    /* Loop indicator */
+    .loop-note {
+      font-size: 10px;
+      color: #f59e0b;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    /* Note box */
+    .note-box {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      border-radius: 0 6px 6px 0;
+      padding: 8px 14px;
+      font-size: 11px;
+      color: #78350f;
+      max-width: 340px;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    /* Connector dot */
+    .connector {
+      width: 10px; height: 10px;
+      background: #94a3b8;
+      border-radius: 50%;
+    }
+
+    /* Section divider */
+    .sec-divider {
+      width: 100%;
+      height: 1px;
+      background: #e2e8f0;
+      margin: 28px 0;
+    }
+
+    /* Sub-section title */
+    .sub-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    /* Field list in loop */
+    .field-loop {
+      background: #eff6ff;
+      border: 2px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px 24px;
+      min-width: 260px;
+      max-width: 380px;
+    }
+    .field-loop-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #2563eb;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .field-loop-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #2563eb; border-radius: 2px; }
+    .field-loop ol {
+      padding-left: 18px;
+    }
+    .field-loop ol li {
+      font-size: 11.5px;
+      color: #1e40af;
+      font-weight: 600;
+      padding: 2px 0;
+    }
+    .field-loop ol li span {
+      font-weight: 400;
+      color: #3b82f6;
+    }
+
+    /* Switch table */
+    .switch-table {
+      border-collapse: collapse;
+      min-width: 320px;
+      font-size: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+    .switch-table th {
+      background: #1e293b;
+      color: #f1f5f9;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .switch-table td {
+      padding: 7px 14px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .switch-table tr:nth-child(even) td { background: #f8fafc; }
+    .switch-table tr:last-child td { border-bottom: none; }
+    .switch-table .case-num { font-weight: 700; color: #2563eb; }
+    .switch-table .case-act { color: #1e293b; }
+
+    /* Two-col layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .two-col { grid-template-columns: 1fr; }
+      .branch-row { flex-direction: column; align-items: center; }
+    }
+
+    /* Highlight shape */
+    .shape-proc.highlight {
+      background: #7c3aed;
+      box-shadow: 0 2px 8px rgba(124,58,237,0.35);
+    }
+    .shape-proc.success {
+      background: #16a34a;
+      box-shadow: 0 2px 8px rgba(22,163,74,0.35);
+    }
+    .shape-proc.danger {
+      background: #dc2626;
+      box-shadow: 0 2px 8px rgba(220,38,38,0.35);
+    }
+    .shape-proc.warning {
+      background: #d97706;
+      box-shadow: 0 2px 8px rgba(217,119,6,0.35);
+    }
+
+    /* Grid flowchart for methods */
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .method-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .method-card-header {
+      background: #1e293b;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #93c5fd;
+      letter-spacing: 0.04em;
+    }
+    .method-card-body {
+      padding: 20px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      color: #94a3b8;
+      background: #0f172a;
+      color: #475569;
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      nav, .cover-toc { display: none !important; }
+      body { background: #fff; }
+      .cover {
+        background: #0f172a !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-after: always;
+      }
+      .fc-section { page-break-inside: avoid; box-shadow: none; border: 1px solid #e2e8f0; }
+      main { padding-top: 20px; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <span class="nav-brand">COMP 2315</span>
+  <a href="#cover">Inicio</a>
+  <a href="#main-java">Main</a>
+  <a href="#paciente-java">Paciente</a>
+  <a href="#validador-java">Validador</a>
+  <a href="#archivo-java">ArchivoMgr</a>
+  <a href="#expediente-java">ExpedienteMgr</a>
+  <a href="#menuutils-java">MenuUtils</a>
+</nav>
+
+<!-- ===== COVER ===== -->
+<section class="cover" id="cover">
+  <div class="cover-inner">
+    <div class="cover-badge">COMP 2315 — Programación Estructurada</div>
+    <h1>Flujogramas del Sistema<br>de Expedientes Médicos</h1>
+    <h2>Documentación visual de la arquitectura y lógica del programa</h2>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Estudiante 1</div>
+        <div class="cover-meta-value">[NOMBRE 1]</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Estudiante 2</div>
+        <div class="cover-meta-value">[NOMBRE 2]</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Sección</div>
+        <div class="cover-meta-value">[SECCIÓN]</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Clases</div>
+        <div class="cover-meta-value">6 Clases Java</div>
+      </div>
+    </div>
+    <div class="cover-toc">
+      <a href="#main-java">1. Main.java <span>Punto de entrada del programa</span></a>
+      <a href="#paciente-java">2. Paciente.java <span>Modelo de datos del paciente</span></a>
+      <a href="#validador-java">3. Validador.java <span>Validaciones de entrada</span></a>
+      <a href="#archivo-java">4. ArchivoManager.java <span>Operaciones de archivo I/O</span></a>
+      <a href="#expediente-java">5. ExpedienteManager.java <span>Lógica CRUD de expedientes</span></a>
+      <a href="#menuutils-java">6. MenuUtils.java <span>Interfaz de usuario</span></a>
+    </div>
+  </div>
+</section>
+
+<main>
+
+<!-- ====================================================== -->
+<!-- 1. MAIN.JAVA                                            -->
+<!-- ====================================================== -->
+<section class="fc-section" id="main-java">
+  <div class="fc-header">
+    <div class="fc-header-num">1</div>
+    <div class="fc-header-text">
+      <h2>Main.java</h2>
+      <p>Punto de entrada del programa — flujo principal de ejecución</p>
+    </div>
+  </div>
+  <div class="fc-body">
+    <div class="fc" style="gap:0;">
+
+      <!-- START -->
+      <div class="shape-se start">INICIO</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <div class="shape-proc">main(String[] args)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <div class="shape-proc">ArchivoManager.inicializarCarpeta()<br><small style="font-weight:400;opacity:0.85;">Crea carpeta /data si no existe</small></div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <div class="shape-proc">MenuUtils.mostrarMensajeBienvenida()<br><small style="font-weight:400;opacity:0.85;">Muestra ventana de bienvenida (JOptionPane)</small></div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <div class="shape-proc">MenuUtils.realizarLogin()<br><small style="font-weight:400;opacity:0.85;">Autenticación del usuario</small></div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <!-- Decision: login OK? -->
+      <div class="diamond-wrap">
+        <div class="shape-dec small">
+          <div class="shape-dec-text">¿Login<br>exitoso?</div>
+        </div>
+      </div>
+
+      <div class="branch-row" style="align-items:flex-start; margin-top:0;">
+
+        <!-- NO branch -->
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:28px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label no">No</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc danger narrow">Mostrar mensaje<br>de acceso denegado</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+
+        <!-- YES branch -->
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:28px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label si">Sí</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <!-- Menu loop -->
+          <div class="shape-proc">Iniciar bucle de menú<br><small style="font-weight:400;opacity:0.85;">boolean ejecutando = true</small></div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <!-- Loop top -->
+          <div class="loop-note">↻ INICIO DEL BUCLE PRINCIPAL</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <div class="shape-proc">opcion = MenuUtils.mostrarMenuPrincipal()<br><small style="font-weight:400;opacity:0.85;">JOptionPane dropdown → retorna int</small></div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <div class="diamond-wrap">
+            <div class="shape-dec small">
+              <div class="shape-dec-text">switch<br>(opcion)</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <!-- Switch cases table -->
+          <table class="switch-table">
+            <thead>
+              <tr><th>Case</th><th>Acción ejecutada</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="case-num">1</td><td class="case-act">ExpedienteManager.crearExpediente()</td></tr>
+              <tr><td class="case-num">2</td><td class="case-act">ExpedienteManager.buscarPorNumero()</td></tr>
+              <tr><td class="case-num">3</td><td class="case-act">ExpedienteManager.buscarPorFechaVisita()</td></tr>
+              <tr><td class="case-num">4</td><td class="case-act">ExpedienteManager.actualizarExpediente()</td></tr>
+              <tr><td class="case-num">5</td><td class="case-act">ejecutando = false → salir del bucle</td></tr>
+              <tr><td class="case-num">default</td><td class="case-act">Mostrar mensaje de opción inválida</td></tr>
+            </tbody>
+          </table>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <div class="diamond-wrap">
+            <div class="shape-dec small">
+              <div class="shape-dec-text">¿ejecutando<br>== true?</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="loop-note">↑ Regresa al menú</div>
+            </div>
+            <div class="branch-col">
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc">MenuUtils.mostrarMensajeDespedida()</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-se end">FIN</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 2. PACIENTE.JAVA                                        -->
+<!-- ====================================================== -->
+<section class="fc-section" id="paciente-java">
+  <div class="fc-header">
+    <div class="fc-header-num">2</div>
+    <div class="fc-header-text">
+      <h2>Paciente.java</h2>
+      <p>Modelo de datos — Constructor, serialización y deserialización</p>
+    </div>
+  </div>
+  <div class="fc-body">
+    <div class="two-col">
+
+      <!-- Constructor -->
+      <div>
+        <div class="sub-title">Constructor — Paciente(13 parámetros)</div>
+        <div class="fc">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc wide">Recibir 13 parámetros:<br><small style="font-weight:400;opacity:0.85;">numeroExpediente, nombre, apellido, fechaNacimiento, seguroSocial, sexo, direccion, telefono, fechaVisita, diagnostico, medicamentos, alergias, medico</small></div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.numeroExpediente = numeroExpediente</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.nombre = nombre</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.apellido = apellido</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.fechaNacimiento = fechaNacimiento</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.seguroSocial = seguroSocial</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.sexo = sexo</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.direccion = direccion</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.telefono = telefono</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.fechaVisita = fechaVisita</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.diagnostico = diagnostico</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.medicamentos = medicamentos</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.alergias = alergias</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">this.medico = medico</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+
+      <!-- toFileString + fromFileString -->
+      <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <div>
+          <div class="sub-title">toFileString() — Serialización</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">Concatenar todos los campos<br>separados por el carácter <code style="background:#bfdbfe;color:#1e40af;border-radius:4px;padding:1px 5px;">|</code></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc success">Retornar String<br><small style="font-weight:400;opacity:0.85;">"campo1|campo2|…|campo13"</small></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">fromFileString(String linea) — Deserialización</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">partes = linea.split(<code style="background:#bfdbfe;color:#1e40af;border-radius:4px;padding:1px 5px;">"\|"</code>)</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap">
+              <div class="shape-dec small">
+                <div class="shape-dec-text">¿partes.length<br>== 13?</div>
+              </div>
+            </div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc danger narrow">Retornar null<br><small style="font-weight:400;opacity:0.85;">Línea inválida</small></div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-se end">FIN</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc narrow">Extraer partes[0..12]<br>a variables locales</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">new Paciente(…)<br>con los 13 campos</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">Retornar objeto<br>Paciente</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-se end">FIN</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 3. VALIDADOR.JAVA                                       -->
+<!-- ====================================================== -->
+<section class="fc-section" id="validador-java">
+  <div class="fc-header">
+    <div class="fc-header-num">3</div>
+    <div class="fc-header-text">
+      <h2>Validador.java</h2>
+      <p>Métodos estáticos de validación y formateo de datos</p>
+    </div>
+  </div>
+  <div class="fc-body">
+    <div class="methods-grid">
+
+      <!-- validarSeguroSocial -->
+      <div class="method-card">
+        <div class="method-card-header">validarSeguroSocial(String ss)</div>
+        <div class="method-card-body">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿ss es<br>null?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc danger narrow">return false</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc narrow">Aplicar regex<br><code style="font-size:9px;background:#bfdbfe;color:#1e40af;border-radius:3px;padding:1px 4px;">XXX-XX-XXXX</code></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Coincide<br>con regex?</div></div></div>
+              <div class="branch-row" style="gap:16px;">
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label si">Sí</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc success narrow">return true</div>
+                </div>
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label no">No</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc danger narrow">return false</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+
+      <!-- validarFecha -->
+      <div class="method-card">
+        <div class="method-card-header">validarFecha(String fecha)</div>
+        <div class="method-card-body">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿fecha es<br>null?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc danger narrow">return false</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc narrow">Regex: formato<br>MM/DD/YYYY</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Coincide<br>regex?</div></div></div>
+              <div class="branch-row" style="gap:16px;">
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label no">No</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc danger narrow">return false</div>
+                </div>
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label si">Sí</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc narrow">SimpleDateFormat<br>setLenient(false)</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc narrow">sdf.parse(fecha)</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Parse<br>OK?</div></div></div>
+                  <div class="branch-row" style="gap:12px;">
+                    <div class="branch-col">
+                      <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                      <div class="branch-label si">Sí</div>
+                      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                      <div class="shape-proc success narrow" style="font-size:11px;">return true</div>
+                    </div>
+                    <div class="branch-col">
+                      <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                      <div class="branch-label no">No</div>
+                      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                      <div class="shape-proc danger narrow" style="font-size:11px;">catch → false</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+
+      <!-- validarSexo -->
+      <div class="method-card">
+        <div class="method-card-header">validarSexo(String sexo)</div>
+        <div class="method-card-body">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc narrow">sexo.toUpperCase()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Es "M"<br>o "F"?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success narrow">return true</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc danger narrow">return false</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+
+      <!-- validarNoVacio -->
+      <div class="method-card">
+        <div class="method-card-header">validarNoVacio(String valor)</div>
+        <div class="method-card-body">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿null o<br>vacío?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc danger narrow">return false</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc narrow">valor.trim()<br>no vacío</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success narrow">return true</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+
+      <!-- capitalizarNombre -->
+      <div class="method-card" style="grid-column: span 2;">
+        <div class="method-card-header">capitalizarNombre(String nombre)</div>
+        <div class="method-card-body">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">palabras = nombre.trim().split("\\s+")</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">StringBuilder resultado = new StringBuilder()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="loop-note">↻ FOR i = 0; i &lt; palabras.length; i++</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">palabras[i].substring(0,1).toUpperCase()<br>+ palabras[i].substring(1).toLowerCase()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">Agregar palabra capitalizada a resultado</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Más<br>palabras?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="loop-note">↑ Siguiente palabra</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No (fin loop)</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success narrow">return resultado.toString()</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-se end">FIN</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 4. ARCHIVOMANAGER.JAVA                                  -->
+<!-- ====================================================== -->
+<section class="fc-section" id="archivo-java">
+  <div class="fc-header">
+    <div class="fc-header-num">4</div>
+    <div class="fc-header-text">
+      <h2>ArchivoManager.java</h2>
+      <p>Operaciones de entrada/salida de archivos — File I/O</p>
+    </div>
+  </div>
+  <div class="fc-body">
+    <div class="two-col">
+
+      <!-- inicializarCarpeta + guardarExpediente -->
+      <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <div>
+          <div class="sub-title">inicializarCarpeta()</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">carpeta = new File("data")</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿carpeta<br>.exists()?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc narrow">No hacer nada<br>(carpeta ya existe)</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc narrow">carpeta.mkdirs()<br>Crear carpeta</div>
+              </div>
+            </div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">guardarExpediente(Paciente p)</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">try { FileWriter(archivo, append=true) }</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">writer.write(p.toFileString() + "\n")</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">writer.close()</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Sin<br>excepción?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">return true</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">catch</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc danger narrow">IOException →<br>return false</div>
+              </div>
+            </div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- cargarTodosLosExpedientes + reescribir -->
+      <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <div>
+          <div class="sub-title">cargarTodosLosExpedientes()</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">lista = new ArrayList&lt;Paciente&gt;()</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Archivo<br>existe?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc warning narrow">return lista vacía</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc narrow">BufferedReader<br>abrir archivo</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="loop-note">↻ WHILE readLine() != null</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc narrow">p = Paciente<br>.fromFileString(linea)</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿p != null?</div></div></div>
+                <div class="branch-row" style="gap:12px;">
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label si">Sí</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="shape-proc narrow" style="font-size:11px;">lista.add(p)</div>
+                  </div>
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label no">No</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="loop-note" style="font-size:10px;">Ignorar línea</div>
+                  </div>
+                </div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="loop-note">↑ Siguiente línea</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">return lista</div>
+              </div>
+            </div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">reescribirTodosLosExpedientes(List lista)</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">FileWriter(archivo, append=false)<br><small style="font-weight:400;opacity:0.85;">Abre el archivo en modo sobreescritura</small></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="loop-note">↻ FOR EACH Paciente p : lista</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">writer.write(p.toFileString() + "\n")</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Más<br>pacientes?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="loop-note">↑ Siguiente paciente</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc">writer.close()</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-se end">FIN</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 5. EXPEDIENTEMANAGER.JAVA                               -->
+<!-- ====================================================== -->
+<section class="fc-section" id="expediente-java">
+  <div class="fc-header">
+    <div class="fc-header-num">5</div>
+    <div class="fc-header-text">
+      <h2>ExpedienteManager.java</h2>
+      <p>Lógica CRUD completa de expedientes médicos</p>
+    </div>
+  </div>
+  <div class="fc-body">
+
+    <!-- crearExpediente -->
+    <div class="sub-title">crearExpediente() — Creación con validación de 11 campos</div>
+    <div class="fc" style="margin-bottom:40px;">
+      <div class="shape-se start">INICIO</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">lista = ArchivoManager.cargarTodosLosExpedientes()</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+      <!-- Field loop box -->
+      <div class="field-loop">
+        <div class="field-loop-title">Bucle de validación — WHILE (!valido) para cada campo:</div>
+        <ol>
+          <li>Nombre <span>→ validarNoVacio + capitalizarNombre</span></li>
+          <li>Apellido <span>→ validarNoVacio + capitalizarNombre</span></li>
+          <li>Fecha de Nacimiento <span>→ validarFecha()</span></li>
+          <li>Seguro Social <span>→ validarSeguroSocial() (XXX-XX-XXXX)</span></li>
+          <li>Sexo <span>→ validarSexo() (M/F)</span></li>
+          <li>Dirección <span>→ validarNoVacio()</span></li>
+          <li>Teléfono <span>→ validarNoVacio()</span></li>
+          <li>Fecha de Visita <span>→ validarFecha()</span></li>
+          <li>Diagnóstico <span>→ validarNoVacio()</span></li>
+          <li>Medicamentos <span>→ validarNoVacio()</span></li>
+          <li>Alergias <span>→ validarNoVacio()</span></li>
+        </ol>
+      </div>
+
+      <div class="note-box" style="margin-top:8px;">
+        Cada campo usa un bucle <strong>while(!valido)</strong>: pide el dato, llama al validador correspondiente. Si falla, muestra mensaje de error y repite. Si pasa, continua al siguiente campo.
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc wide">Generar número de expediente automático<br><small style="font-weight:400;opacity:0.85;">Ej: "EXP-" + System.currentTimeMillis() o contador incremental</small></div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">Ingresar nombre del médico<br><small style="font-weight:400;opacity:0.85;">→ validarNoVacio + capitalizarNombre</small></div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc highlight">new Paciente(numeroExpediente, nombre, apellido,<br>fechaNacimiento, seguroSocial, sexo, direccion,<br>telefono, fechaVisita, diagnostico, medicamentos,<br>alergias, medico)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">ArchivoManager.guardarExpediente(nuevoPaciente)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="diamond-wrap"><div class="shape-dec"><div class="shape-dec-text">¿Guardado<br>exitoso?</div></div></div>
+      <div class="branch-row">
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label si">Sí</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc success">Mostrar confirmación:<br>"Expediente creado exitosamente"<br>Mostrar número asignado</div>
+        </div>
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:24px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label no">No</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc danger">Mostrar error:<br>"No se pudo guardar<br>el expediente"</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-se end">FIN</div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <!-- Search methods -->
+    <div class="two-col" style="margin-bottom:40px;">
+
+      <div>
+        <div class="sub-title">buscarPorNumero()</div>
+        <div class="fc">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">lista = cargarTodosLosExpedientes()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">numero = JOptionPane.showInputDialog<br>("Ingrese número de expediente")</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="loop-note">↻ FOR i = 0; i &lt; lista.size(); i++</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿lista[i].numero<br>== numero?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success narrow">Mostrar datos<br>del paciente<br>encontrado</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-se end">FIN</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Fin de<br>lista?</div></div></div>
+              <div class="branch-row" style="gap:12px;">
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label no">No</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="loop-note" style="font-size:9px;">↑ Siguiente</div>
+                </div>
+                <div class="branch-col">
+                  <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                  <div class="branch-label si">Sí</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-proc danger narrow" style="font-size:11px;">"No encontrado"</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                  <div class="shape-se end">FIN</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sub-title">buscarPorFechaVisita()</div>
+        <div class="fc">
+          <div class="shape-se start">INICIO</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">lista = cargarTodosLosExpedientes()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">fecha = JOptionPane.showInputDialog<br>("Ingrese fecha a buscar")</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">resultados = new ArrayList&lt;&gt;()</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="loop-note">↻ FOR EACH Paciente p : lista</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿p.fechaVisita<br>.equals(fecha)?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc narrow">resultados.add(p)</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="loop-note" style="font-size:10px;">↑ Continuar</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿resultados<br>.isEmpty()?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc danger narrow">"Sin resultados<br>para esa fecha"</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:18px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success narrow">Mostrar todos<br>los resultados<br>encontrados</div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <!-- actualizarExpediente -->
+    <div class="sub-title">actualizarExpediente() — Búsqueda, submenú de 11 opciones y persistencia</div>
+    <div class="fc" style="margin-top:8px;">
+      <div class="shape-se start">INICIO</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">lista = cargarTodosLosExpedientes()</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">numero = JOptionPane.showInputDialog<br>("Ingrese número del expediente a actualizar")</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="shape-proc">Buscar paciente en lista (for loop)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+      <div class="diamond-wrap"><div class="shape-dec"><div class="shape-dec-text">¿Expediente<br>encontrado?</div></div></div>
+      <div class="branch-row">
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:28px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label no">No</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc danger narrow">"Expediente no<br>encontrado"</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-se end">FIN</div>
+        </div>
+        <div class="branch-col">
+          <div class="arrow"><div class="arrow-line" style="height:28px;"></div><div class="arrow-head">▼</div></div>
+          <div class="branch-label si">Sí</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="loop-note">↻ BUCLE DE ACTUALIZACIÓN (while continuar)</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">Mostrar submenú de campos a actualizar</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">campo = JOptionPane dropdown → int</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+
+          <!-- Switch table for update -->
+          <table class="switch-table">
+            <thead>
+              <tr><th>Opción</th><th>Campo a actualizar</th><th>Validación</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="case-num">1</td><td class="case-act">Nombre</td><td style="font-size:11px;color:#64748b;">validarNoVacio + capitalizar</td></tr>
+              <tr><td class="case-num">2</td><td class="case-act">Apellido</td><td style="font-size:11px;color:#64748b;">validarNoVacio + capitalizar</td></tr>
+              <tr><td class="case-num">3</td><td class="case-act">Fecha de Nacimiento</td><td style="font-size:11px;color:#64748b;">validarFecha()</td></tr>
+              <tr><td class="case-num">4</td><td class="case-act">Seguro Social</td><td style="font-size:11px;color:#64748b;">validarSeguroSocial()</td></tr>
+              <tr><td class="case-num">5</td><td class="case-act">Sexo</td><td style="font-size:11px;color:#64748b;">validarSexo()</td></tr>
+              <tr><td class="case-num">6</td><td class="case-act">Dirección</td><td style="font-size:11px;color:#64748b;">validarNoVacio()</td></tr>
+              <tr><td class="case-num">7</td><td class="case-act">Teléfono</td><td style="font-size:11px;color:#64748b;">validarNoVacio()</td></tr>
+              <tr><td class="case-num">8</td><td class="case-act">Fecha de Visita</td><td style="font-size:11px;color:#64748b;">validarFecha()</td></tr>
+              <tr><td class="case-num">9</td><td class="case-act">Diagnóstico</td><td style="font-size:11px;color:#64748b;">validarNoVacio()</td></tr>
+              <tr><td class="case-num">10</td><td class="case-act">Medicamentos</td><td style="font-size:11px;color:#64748b;">validarNoVacio()</td></tr>
+              <tr><td class="case-num">11</td><td class="case-act">Alergias</td><td style="font-size:11px;color:#64748b;">validarNoVacio()</td></tr>
+              <tr><td class="case-num">12</td><td class="case-act">Terminar actualización</td><td style="font-size:11px;color:#64748b;">continuar = false</td></tr>
+            </tbody>
+          </table>
+
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">while (!valido) → Pedir nuevo valor → Validar</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="shape-proc">paciente.setCampo(nuevoValor)</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+          <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿continuar<br>editando?</div></div></div>
+          <div class="branch-row">
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label si">Sí</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="loop-note">↑ Volver al submenú</div>
+            </div>
+            <div class="branch-col">
+              <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+              <div class="branch-label no">No</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc">lista.set(indice, pacienteActualizado)</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc">ArchivoManager<br>.reescribirTodosLosExpedientes(lista)</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-proc success">"Expediente actualizado<br>exitosamente"</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+              <div class="shape-se end">FIN</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 6. MENUUTILS.JAVA                                       -->
+<!-- ====================================================== -->
+<section class="fc-section" id="menuutils-java">
+  <div class="fc-header">
+    <div class="fc-header-num">6</div>
+    <div class="fc-header-text">
+      <h2>MenuUtils.java</h2>
+      <p>Interfaz de usuario — JOptionPane, login y menús</p>
+    </div>
+  </div>
+  <div class="fc-body">
+    <div class="two-col">
+
+      <!-- mostrarMensajeBienvenida + mostrarMensajeDespedida -->
+      <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <div>
+          <div class="sub-title">mostrarMensajeBienvenida()</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">Construir mensaje de bienvenida<br><small style="font-weight:400;opacity:0.85;">Nombre del sistema + instrucciones iniciales</small></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc highlight">JOptionPane.showMessageDialog(<br>null, mensaje, "Bienvenido",<br>INFORMATION_MESSAGE)</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">mostrarMensajeDespedida()</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">Construir mensaje de despedida<br><small style="font-weight:400;opacity:0.85;">"Gracias por usar el sistema…"</small></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc highlight">JOptionPane.showMessageDialog(<br>null, mensaje, "Hasta luego",<br>INFORMATION_MESSAGE)</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">mostrarMenuPrincipal()</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">Preparar arreglo de opciones:<br>["1. Crear", "2. Buscar por #",<br>"3. Buscar por fecha", "4. Actualizar", "5. Salir"]</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc highlight">JOptionPane.showOptionDialog(<br>null, opciones, …)<br>→ retorna índice seleccionado</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc success">return (indice + 1)</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-se end">FIN</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- realizarLogin + validarCredenciales -->
+      <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <div>
+          <div class="sub-title">realizarLogin() — Máximo 3 intentos</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">intentos = 0</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="loop-note">↻ WHILE intentos &lt; 3</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc highlight">JOptionPane.showInputDialog<br>("Usuario:")</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc highlight">JOptionPane.showInputDialog<br>("Contraseña:")</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">validarCredenciales(usuario, contrasena)</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Credenciales<br>válidas?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">"Acceso concedido"<br>return true</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-se end">FIN</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc warning narrow">intentos++<br>Mostrar "Intento X/3<br>incorrecto"</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿intentos<br>== 3?</div></div></div>
+                <div class="branch-row" style="gap:12px;">
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label no">No</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="loop-note" style="font-size:9px;">↑ Reintentar</div>
+                  </div>
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label si">Sí</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="shape-proc danger narrow" style="font-size:11px;">"Acceso bloqueado"<br>return false</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="shape-se end">FIN</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-title">validarCredenciales(String usuario, String pass)</div>
+          <div class="fc">
+            <div class="shape-se start">INICIO</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="shape-proc">Arreglos predefinidos:<br><code style="font-size:10px;background:#bfdbfe;color:#1e40af;border-radius:3px;padding:2px 5px;">usuarios[]</code> y <code style="font-size:10px;background:#bfdbfe;color:#1e40af;border-radius:3px;padding:2px 5px;">contrasenas[]</code></div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="loop-note">↻ FOR i = 0; i &lt; usuarios.length; i++</div>
+            <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+            <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿usuarios[i]<br>== usuario<br>Y pass[i]<br>== pass?</div></div></div>
+            <div class="branch-row">
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label si">Sí</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-proc success narrow">return true</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="shape-se end">FIN</div>
+              </div>
+              <div class="branch-col">
+                <div class="arrow"><div class="arrow-line" style="height:20px;"></div><div class="arrow-head">▼</div></div>
+                <div class="branch-label no">No</div>
+                <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                <div class="diamond-wrap"><div class="shape-dec small"><div class="shape-dec-text">¿Fin del<br>arreglo?</div></div></div>
+                <div class="branch-row" style="gap:12px;">
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label no">No</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="loop-note" style="font-size:9px;">↑ i++</div>
+                  </div>
+                  <div class="branch-col">
+                    <div class="arrow"><div class="arrow-line" style="height:16px;"></div><div class="arrow-head">▼</div></div>
+                    <div class="branch-label si">Sí</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="shape-proc danger narrow" style="font-size:11px;">return false</div>
+                    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head">▼</div></div>
+                    <div class="shape-se end">FIN</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Sistema de Expedientes Médicos &mdash; COMP 2315 &mdash; Programación Estructurada</p>
+  <p style="margin-top:6px;">Documento generado para uso académico &mdash; [NOMBRE 1] &amp; [NOMBRE 2] &mdash; Sección [SECCIÓN]</p>
+</footer>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  function updateNav() {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 80;
+      if (window.scrollY >= top) current = sec.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+</script>
+
+</body>
+</html>
