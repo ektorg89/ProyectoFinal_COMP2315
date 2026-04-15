@@ -1,3 +1,18 @@
+/*
+ * Nombre del archivo: ExpedienteManager.java
+ * Propósito: Contiene la lógica CRUD para manejar expedientes médicos:
+ *            crear, buscar por número, buscar por fecha, actualizar y listar.
+ *            Usa JOptionPane para la interacción con el usuario.
+ * Autor(es): Ektor M. Gonzalez - A00617167
+ *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
+ *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
+ *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ * Curso: COMP 2315 - Programación Estructurada
+ * Profesor: Dr. Edgardo Vargas Moya
+ * Fecha de creación: 04/14/2026
+ * Versión: 1.0
+ */
+
 // ExpedienteManager.java
 // Contiene la lógica CRUD para manejar expedientes médicos:
 // crear, buscar por número, buscar por fecha, actualizar y listar.
@@ -17,6 +32,17 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Constructor ──────────────────────────────────────────────────────────
 
+    /*
+     * Nombre: ExpedienteManager
+     * Propósito: Inicializa el manejador cargando todos los expedientes existentes
+     *            desde el archivo y configurando el contador para el siguiente expediente.
+     * Precondiciones: La carpeta "data/" debe existir (inicializada por ArchivoManager)
+     * Postcondiciones: listaPacientes contiene todos los expedientes del archivo y
+     *                  contadorExpediente apunta al siguiente número disponible
+     * Argumentos: Ninguno
+     * Valor que devuelve: void (constructor)
+     * Versión: 1.0
+     */
     public ExpedienteManager() { // Al crear el objeto, carga automáticamente los expedientes existentes
         listaPacientes = ArchivoManager.cargarTodosLosExpedientes(); // Lee el archivo y llena la lista
         contadorExpediente = listaPacientes.size() + 1; // El contador empieza después del último expediente existente
@@ -24,10 +50,20 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Generar número de expediente ─────────────────────────────────────────
 
-    private String generarNumeroExpediente() { // Genera un número único en formato EXP-XXXXX
+    /*
+     * Nombre: generarNumeroExpediente
+     * Propósito: Genera un número de expediente único en formato EXP-00000,
+     *            incrementando el contador hasta encontrar uno que no esté en uso.
+     * Precondiciones: contadorExpediente debe estar inicializado
+     * Postcondiciones: contadorExpediente queda incrementado al siguiente valor disponible
+     * Argumentos: Ninguno
+     * Valor que devuelve: String — número de expediente único en formato EXP-00000
+     * Versión: 1.0
+     */
+    private String generarNumeroExpediente() { // Genera un número único en formato EXP-00000
         String numero; // Variable para almacenar el número generado
         do { // Repite hasta encontrar un número que no esté en uso
-            numero = String.format("EXP-A%04d", contadorExpediente); // Genera "EXP-A0001", "EXP-A0002", etc.
+            numero = String.format("EXP-%05d", contadorExpediente); // Genera "EXP-00001", "EXP-00002", etc.
             contadorExpediente++; // Incrementa el contador para el próximo expediente
         } while (ArchivoManager.existeExpediente(numero)); // Verifica que el número no exista ya en el archivo
         return numero; // Retorna el número único generado
@@ -35,11 +71,22 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Crear nuevo expediente ───────────────────────────────────────────────
 
+    /*
+     * Nombre: crearExpediente
+     * Propósito: Guía al usuario mediante diálogos para ingresar todos los datos
+     *            del nuevo expediente, valida cada campo y guarda el registro en
+     *            memoria y en el archivo de texto.
+     * Precondiciones: La carpeta "data/" debe existir y el archivo debe ser accesible
+     * Postcondiciones: El nuevo expediente queda guardado en listaPacientes y en el archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public void crearExpediente() { // Guía al usuario para ingresar todos los datos del nuevo expediente
 
         // ── Nombre ──────────────────────────────────────────────────────────
-        String nombre = ""; // Inicializa vacío para que entre al bucle de validación
-        while (!Validador.validarNoVacio(nombre)) { // Repite hasta que el usuario ingrese un nombre válido
+        String nombre = ""; // Inicializa vacío para la validación inicial
+        do { // Estructura do...while: ejecuta el cuerpo al menos una vez (Lección 10 — do...while)
             nombre = JOptionPane.showInputDialog(null,
                 "Ingrese el PRIMER NOMBRE del paciente:",
                 "Nuevo Expediente — Nombre", JOptionPane.PLAIN_MESSAGE); // Muestra diálogo de entrada
@@ -49,7 +96,7 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
                 JOptionPane.showMessageDialog(null,
                     "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE); // Muestra error
             }
-        }
+        } while (!Validador.validarNoVacio(nombre)); // Continúa hasta obtener un nombre no vacío
 
         // ── Inicial ──────────────────────────────────────────────────────────
         String inicial = JOptionPane.showInputDialog(null,
@@ -206,6 +253,16 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Buscar por número de expediente ──────────────────────────────────────
 
+    /*
+     * Nombre: buscarPorNumero
+     * Propósito: Solicita al usuario un número de expediente y muestra todos los
+     *            datos del paciente si el expediente es encontrado en la lista.
+     * Precondiciones: listaPacientes debe estar inicializada
+     * Postcondiciones: Ninguna — no modifica la lista ni el archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public void buscarPorNumero() { // Busca y muestra un expediente según su número único
         String busqueda = JOptionPane.showInputDialog(null,
             "Ingrese el NÚMERO DE EXPEDIENTE a buscar (formato: EXP-XXXXX):",
@@ -220,7 +277,8 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
         busqueda = busqueda.trim().toUpperCase(); // Normaliza a mayúsculas para comparación
         Paciente encontrado = null; // Variable para guardar el resultado de la búsqueda
 
-        for (Paciente p : listaPacientes) { // Recorre cada paciente en la lista
+        for (int i = 0; i < listaPacientes.size(); i++) { // Recorre cada paciente en la lista con índice
+            Paciente p = listaPacientes.get(i); // Obtiene el paciente en la posición actual
             if (p.getNumeroExpediente().equalsIgnoreCase(busqueda)) { // Compara el número sin importar mayúsculas
                 encontrado = p; // Guarda la referencia al paciente encontrado
                 break; // Sale del bucle — no necesita seguir buscando
@@ -240,6 +298,16 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Buscar por fecha de visita ───────────────────────────────────────────
 
+    /*
+     * Nombre: buscarPorFechaVisita
+     * Propósito: Solicita al usuario una fecha y muestra todos los expedientes
+     *            cuya fecha de visita coincida exactamente con la fecha ingresada.
+     * Precondiciones: listaPacientes debe estar inicializada
+     * Postcondiciones: Ninguna — no modifica la lista ni el archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public void buscarPorFechaVisita() { // Busca todos los expedientes con una fecha de visita específica
         String fecha = ""; // Inicializa vacío para validación
         while (!Validador.validarFecha(fecha)) { // Repite hasta obtener una fecha válida
@@ -259,7 +327,8 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
         }
 
         ArrayList<Paciente> resultados = new ArrayList<>(); // Lista para guardar todos los pacientes que coincidan
-        for (Paciente p : listaPacientes) { // Recorre todos los expedientes
+        for (int i = 0; i < listaPacientes.size(); i++) { // Recorre todos los expedientes con índice
+            Paciente p = listaPacientes.get(i); // Obtiene el paciente en la posición actual
             if (p.getFechaVisita().equals(fecha.trim())) { // Compara la fecha de visita exactamente
                 resultados.add(p); // Agrega el paciente a los resultados si coincide la fecha
             }
@@ -272,7 +341,8 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
         } else { // Si encontró uno o más expedientes
             StringBuilder sb = new StringBuilder(); // Objeto para construir el mensaje con todos los resultados
             sb.append("Expedientes con fecha de visita ").append(fecha).append(":\n\n");
-            for (Paciente p : resultados) { // Agrega cada expediente encontrado al mensaje
+            for (int i = 0; i < resultados.size(); i++) { // Agrega cada expediente encontrado al mensaje con índice
+                Paciente p = resultados.get(i); // Obtiene el resultado en la posición actual
                 sb.append(p.toString()).append("\n\n");
             }
             JOptionPane.showMessageDialog(null,
@@ -284,6 +354,17 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Actualizar expediente ────────────────────────────────────────────────
 
+    /*
+     * Nombre: actualizarExpediente
+     * Propósito: Busca un expediente por número y permite al usuario modificar
+     *            cualquiera de sus campos mediante un submenú de opciones.
+     *            Los cambios se guardan en memoria y en el archivo al terminar.
+     * Precondiciones: listaPacientes debe estar inicializada
+     * Postcondiciones: El expediente modificado queda actualizado en listaPacientes y en el archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public void actualizarExpediente() { // Busca un expediente y permite modificar sus campos
         String busqueda = JOptionPane.showInputDialog(null,
             "Ingrese el NÚMERO DE EXPEDIENTE a actualizar (formato: EXP-XXXXX):",
@@ -298,7 +379,8 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
         busqueda = busqueda.trim().toUpperCase(); // Normaliza a mayúsculas
         Paciente paciente = null; // Variable para guardar el expediente encontrado
 
-        for (Paciente p : listaPacientes) { // Busca el expediente en la lista
+        for (int i = 0; i < listaPacientes.size(); i++) { // Busca el expediente en la lista con índice
+            Paciente p = listaPacientes.get(i); // Obtiene el paciente en la posición actual
             if (p.getNumeroExpediente().equalsIgnoreCase(busqueda)) {
                 paciente = p; // Guarda la referencia al paciente para modificarlo
                 break;
@@ -514,6 +596,16 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Listar todos los expedientes ─────────────────────────────────────────
 
+    /*
+     * Nombre: listarTodosLosExpedientes
+     * Propósito: Recarga los expedientes desde el archivo y los muestra en formato
+     *            de tabla con número de expediente, nombre del paciente y fecha de visita.
+     * Precondiciones: Ninguna — recarga automáticamente desde el archivo
+     * Postcondiciones: listaPacientes queda actualizada con los datos más recientes del archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public void listarTodosLosExpedientes() { // Muestra un resumen en tabla de todos los expedientes
         listaPacientes = ArchivoManager.cargarTodosLosExpedientes(); // Recarga desde el archivo para tener datos actualizados
 
@@ -532,7 +624,8 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
             "Expediente", "Paciente", "Fecha Visita")); // Encabezados de columna
         sb.append("─".repeat(60)).append("\n"); // Línea separadora bajo los encabezados
 
-        for (Paciente p : listaPacientes) { // Recorre cada paciente y agrega una fila a la tabla
+        for (int i = 0; i < listaPacientes.size(); i++) { // Recorre cada paciente con índice (Lección 10 — estructura for)
+            Paciente p = listaPacientes.get(i); // Obtiene el paciente en la posición actual
             sb.append(String.format("%-12s %-28s %-12s%n",
                 p.getNumeroExpediente(),
                 p.getNombreCompleto().length() > 27 // Si el nombre es muy largo, lo trunca con "…"
@@ -550,6 +643,16 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Seleccionar plan médico ──────────────────────────────────────────────
 
+    /*
+     * Nombre: seleccionarPlanMedico
+     * Propósito: Muestra una lista desplegable con los 6 planes médicos disponibles
+     *            y retorna el plan seleccionado por el usuario.
+     * Precondiciones: Ninguna
+     * Postcondiciones: Ninguna — no modifica el estado del objeto
+     * Argumentos: Ninguno
+     * Valor que devuelve: String — nombre del plan médico seleccionado, o null si se canceló
+     * Versión: 1.0
+     */
     private String seleccionarPlanMedico() { // Muestra una lista desplegable con los planes médicos disponibles
         String[] planes = { // Arreglo con los 6 planes médicos aceptados por el sistema
             "Triple-S",
@@ -573,6 +676,16 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Mensaje de cancelación ───────────────────────────────────────────────
 
+    /*
+     * Nombre: mostrarCancelado
+     * Propósito: Muestra un aviso al usuario informando que la operación de
+     *            creación de expediente fue cancelada.
+     * Precondiciones: Ninguna
+     * Postcondiciones: El diálogo de cancelación fue mostrado y cerrado por el usuario
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     private void mostrarCancelado() { // Muestra un aviso cuando el usuario cancela la creación
         JOptionPane.showMessageDialog(null,
             "Operación cancelada. No se creó el expediente.",
@@ -581,6 +694,15 @@ public class ExpedienteManager { // Clase principal de lógica — maneja todas 
 
     // ─── Getter de la lista ───────────────────────────────────────────────────
 
+    /*
+     * Nombre: getListaPacientes
+     * Propósito: Retorna la referencia a la lista de pacientes actualmente en memoria.
+     * Precondiciones: El objeto ExpedienteManager debe estar inicializado
+     * Postcondiciones: Ninguna — no modifica el estado del objeto
+     * Argumentos: Ninguno
+     * Valor que devuelve: ArrayList<Paciente> — lista con todos los pacientes cargados en memoria
+     * Versión: 1.0
+     */
     public ArrayList<Paciente> getListaPacientes() { // Retorna la lista de pacientes en memoria
         return listaPacientes;
     }

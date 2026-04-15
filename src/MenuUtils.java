@@ -1,3 +1,18 @@
+/*
+ * Nombre del archivo: MenuUtils.java
+ * Propósito: Contiene los métodos para la interfaz de usuario: mensaje de bienvenida,
+ *            proceso de login con hasta 3 intentos, menú principal y mensaje de despedida.
+ *            Usa arreglos paralelos para validar las credenciales de acceso.
+ * Autor(es): Ektor M. Gonzalez - A00617167
+ *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
+ *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
+ *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ * Curso: COMP 2315 - Programación Estructurada
+ * Profesor: Dr. Edgardo Vargas Moya
+ * Fecha de creación: 04/14/2026
+ * Versión: 1.0
+ */
+
 // MenuUtils.java
 // Contiene los métodos para la interfaz de usuario: mensaje de bienvenida,
 // proceso de login con hasta 3 intentos, menú principal y mensaje de despedida.
@@ -9,15 +24,25 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
 
     // ─── Credenciales hardcoded (usuario/contraseña) ──────────────────────────
 
-    private static final String[] USUARIOS = { "admin", "doctor" }; /* Arreglo con los nombres de usuario válidos —
-                                                                         cada posición corresponde a un usuario */
-    private static final String[] CONTRASENAS = { "admin123", "doc2315" }; /* Arreglo con las contraseñas correspondientes —
-                                                                                la posición [i] de USUARIOS coincide con [i] de CONTRASENAS */
+    private static String[] USUARIOS = { "admin", "doctor" }; /* Arreglo con los nombres de usuario válidos —
+                                                                   cada posición corresponde a un usuario */
+    private static String[] CONTRASENAS = { "admin123", "doc2315" }; /* Arreglo con las contraseñas correspondientes —
+                                                                          la posición [i] de USUARIOS coincide con [i] de CONTRASENAS */
 
-    private static final int MAX_INTENTOS = 3; // Número máximo de intentos de login antes de bloquear el acceso
+    private static int MAX_INTENTOS = 3; // Número máximo de intentos de login antes de bloquear el acceso
 
     // ─── Mensaje de bienvenida ────────────────────────────────────────────────
 
+    /*
+     * Nombre: mostrarMensajeBienvenida
+     * Propósito: Muestra la pantalla de presentación al iniciar la aplicación con
+     *            los nombres del equipo, el propósito del sistema y la información del curso.
+     * Precondiciones: Ninguna
+     * Postcondiciones: El diálogo de bienvenida fue mostrado y cerrado por el usuario
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public static void mostrarMensajeBienvenida() { // Muestra la pantalla de presentación al iniciar la aplicación
         String mensaje = // Construye el texto del mensaje con información del proyecto y los creadores
             "╔══════════════════════════════════════════════════════╗\n" +
@@ -47,6 +72,17 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
 
     // ─── Proceso de login ─────────────────────────────────────────────────────
 
+    /*
+     * Nombre: realizarLogin
+     * Propósito: Solicita las credenciales de acceso al usuario y las valida
+     *            contra los arreglos de usuarios y contraseñas. Permite hasta
+     *            3 intentos antes de bloquear el acceso al sistema.
+     * Precondiciones: Ninguna
+     * Postcondiciones: Retorna true si el acceso fue concedido, false si fue denegado o cancelado
+     * Argumentos: Ninguno
+     * Valor que devuelve: boolean — true si el login fue exitoso, false si falló o se canceló
+     * Versión: 1.0
+     */
     public static boolean realizarLogin() { // Solicita credenciales y valida el acceso al sistema
         int intentos = 0; // Contador de intentos fallidos — inicia en cero
 
@@ -92,6 +128,16 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
 
     // ─── Validar credenciales ─────────────────────────────────────────────────
 
+    /*
+     * Nombre: validarCredenciales
+     * Propósito: Compara el usuario y contraseña recibidos contra los arreglos
+     *            paralelos de credenciales válidas del sistema.
+     * Precondiciones: usuario y contrasena no deben ser nulos
+     * Postcondiciones: Ninguna — no modifica el estado de la clase
+     * Argumentos: usuario — nombre de usuario ingresado; contrasena — contraseña ingresada
+     * Valor que devuelve: boolean — true si las credenciales coinciden con un par válido, false en caso contrario
+     * Versión: 1.0
+     */
     private static boolean validarCredenciales(String usuario, String contrasena) { // Compara credenciales contra los arreglos
         for (int i = 0; i < USUARIOS.length; i++) { // Recorre cada posición de los arreglos paralelos
             if (USUARIOS[i].equals(usuario) && CONTRASENAS[i].equals(contrasena)) { // Compara usuario Y contraseña
@@ -103,6 +149,16 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
 
     // ─── Mostrar menú principal ───────────────────────────────────────────────
 
+    /*
+     * Nombre: mostrarMenuPrincipal
+     * Propósito: Muestra el menú principal con las 6 opciones del sistema mediante
+     *            una lista desplegable y retorna el número de la opción elegida.
+     * Precondiciones: Ninguna
+     * Postcondiciones: Ninguna — no modifica el estado de la clase
+     * Argumentos: Ninguno
+     * Valor que devuelve: int — número de la opción seleccionada (1-6), o -1 si se cerró el diálogo
+     * Versión: 1.0
+     */
     public static int mostrarMenuPrincipal() { // Muestra el menú con las 6 opciones y retorna la opción elegida
         String[] opciones = { // Arreglo con las opciones del menú principal
             "1. Crear nuevo expediente",
@@ -131,6 +187,16 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
 
     // ─── Mensaje de despedida ─────────────────────────────────────────────────
 
+    /*
+     * Nombre: mostrarMensajeDespedida
+     * Propósito: Muestra el mensaje de cierre de la aplicación informando al usuario
+     *            que todos los expedientes han sido guardados correctamente.
+     * Precondiciones: Ninguna
+     * Postcondiciones: El diálogo de despedida fue mostrado y cerrado por el usuario
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public static void mostrarMensajeDespedida() { // Muestra el mensaje final al cerrar la aplicación
         JOptionPane.showMessageDialog(null,
             "╔══════════════════════════════════════════════════════╗\n" +

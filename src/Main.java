@@ -1,3 +1,18 @@
+/*
+ * Nombre del archivo: Main.java
+ * Propósito: Punto de entrada del Sistema de Expedientes Médicos del Dr. Rodríguez.
+ *            Coordina el flujo completo: bienvenida, login, menú principal con switch
+ *            y cierre del sistema.
+ * Autor(es): Ektor M. Gonzalez - A00617167
+ *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
+ *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
+ *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ * Curso: COMP 2315 - Programación Estructurada
+ * Profesor: Dr. Edgardo Vargas Moya
+ * Fecha de creación: 04/14/2026
+ * Versión: 1.0
+ */
+
 // Main.java
 // Punto de entrada del Sistema de Expedientes Médicos del Dr. Rodríguez.
 // Coordina el flujo completo: bienvenida, login, menú principal con switch
@@ -11,6 +26,17 @@ import java.util.regex.*;   // Importa Pattern y Matcher para validaciones con e
 
 public class Main { // Clase principal del programa — contiene el método main que inicia la ejecución
 
+    /*
+     * Nombre: main
+     * Propósito: Punto de entrada de la aplicación; inicializa la carpeta de datos,
+     *            muestra la bienvenida, realiza el login y ejecuta el menú principal
+     *            en bucle hasta que el usuario decida salir.
+     * Precondiciones: Ninguna
+     * Postcondiciones: La aplicación se ha ejecutado y cerrado limpiamente
+     * Argumentos: args — arreglo de argumentos de línea de comandos (no se utilizan)
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
     public static void main(String[] args) { // Método main: punto de entrada, Java lo ejecuta al iniciar el programa
 
         // ── Paso 1: Inicializar la carpeta de datos ──────────────────────────
