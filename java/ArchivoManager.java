@@ -1,18 +1,3 @@
-/*
- * Nombre del archivo: ArchivoManager.java
- * Propósito: Gestiona todas las operaciones de lectura y escritura de expedientes
- *            médicos en el archivo de texto "data/expedientes.txt". Provee métodos
- *            para guardar, cargar, reescribir y verificar expedientes en disco.
- * Autor(es): Ektor M. Gonzalez - A00617167
- *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
- *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
- *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
- * Curso: COMP 2315 - Programación Estructurada
- * Profesor: Dr. Edgardo Vargas Moya
- * Fecha de creación: 04/14/2026
- * Versión: 1.0
- */
-
 // ArchivoManager.java
 // Gestiona todas las operaciones de lectura y escritura de expedientes
 // médicos en el archivo de texto "data/expedientes.txt". Provee métodos
@@ -25,22 +10,11 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Ruta de la carpeta de datos ─────────────────────────────────────────
 
-    private static String CARPETA_DATA = "data" + File.separator; /* Ruta relativa a la carpeta "data/"
-                                                                      File.separator usa "/" en Mac/Linux y "\" en Windows */
+    private static String CARPETA_DATA = "data" + File.separator; 
     private static String ARCHIVO_PRINCIPAL = CARPETA_DATA + "expedientes.txt"; // Ruta completa al archivo de expedientes
 
     // ─── Inicialización ───────────────────────────────────────────────────────
 
-    /*
-     * Nombre: inicializarCarpeta
-     * Propósito: Verifica si la carpeta "data/" existe y la crea si no existe,
-     *            garantizando que el directorio de almacenamiento esté disponible.
-     * Precondiciones: Ninguna
-     * Postcondiciones: La carpeta "data/" existe en el sistema de archivos
-     * Argumentos: Ninguno
-     * Valor que devuelve: void
-     * Versión: 1.0
-     */
     public static void inicializarCarpeta() { // Verifica y crea la carpeta "data" si no existe
         File carpeta = new File(CARPETA_DATA); // Crea un objeto File apuntando a la carpeta "data"
         if (!carpeta.exists()) { // Si la carpeta no existe en el sistema de archivos
@@ -50,18 +24,7 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Guardar un expediente ────────────────────────────────────────────────
 
-    /*
-     * Nombre: guardarExpediente
-     * Propósito: Agrega el expediente de un nuevo paciente al final del archivo
-     *            de texto sin borrar el contenido existente (modo append).
-     * Precondiciones: paciente no debe ser nulo y todos sus campos deben estar inicializados
-     * Postcondiciones: Los datos del paciente quedan escritos en el archivo de expedientes
-     * Argumentos: paciente — objeto Paciente con los datos a guardar en el archivo
-     * Valor que devuelve: boolean — true si el guardado fue exitoso, false si ocurrió un error
-     * Versión: 1.0
-     */
-    public static boolean guardarExpediente(Paciente paciente) { /* Agrega una nueva línea al archivo
-                                                                     sin borrar el contenido existente */
+    public static boolean guardarExpediente(Paciente paciente) { 
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(ARCHIVO_PRINCIPAL, true))) { // "true" activa el modo append (agregar al final)
 
@@ -77,16 +40,6 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Cargar todos los expedientes ─────────────────────────────────────────
 
-    /*
-     * Nombre: cargarTodosLosExpedientes
-     * Propósito: Lee el archivo de expedientes línea por línea y construye una
-     *            lista de objetos Paciente con todos los registros almacenados.
-     * Precondiciones: Ninguna — si el archivo no existe retorna una lista vacía
-     * Postcondiciones: Retorna una lista con todos los pacientes cargados del archivo
-     * Argumentos: Ninguno
-     * Valor que devuelve: ArrayList<Paciente> — lista con todos los expedientes leídos del archivo
-     * Versión: 1.0
-     */
     public static ArrayList<Paciente> cargarTodosLosExpedientes() { // Lee el archivo y retorna todos los expedientes
         ArrayList<Paciente> lista = new ArrayList<>(); // Crea una lista vacía para almacenar los pacientes
         File archivo = new File(ARCHIVO_PRINCIPAL); // Crea un objeto File apuntando al archivo principal
@@ -115,18 +68,7 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Reescribir todos los expedientes ────────────────────────────────────
 
-    /*
-     * Nombre: reescribirTodosLosExpedientes
-     * Propósito: Sobrescribe el archivo completo con la lista actualizada de
-     *            pacientes, reemplazando todo el contenido anterior.
-     * Precondiciones: lista no debe ser nula (puede estar vacía)
-     * Postcondiciones: El archivo contiene únicamente los expedientes de la lista recibida
-     * Argumentos: lista — ArrayList con todos los pacientes a escribir en el archivo
-     * Valor que devuelve: boolean — true si la reescritura fue exitosa, false si ocurrió un error
-     * Versión: 1.0
-     */
-    public static boolean reescribirTodosLosExpedientes(ArrayList<Paciente> lista) { /* Sobrescribe el archivo
-                                                                                         completo con la lista actualizada */
+    public static boolean reescribirTodosLosExpedientes(ArrayList<Paciente> lista) { 
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(ARCHIVO_PRINCIPAL, false))) { // "false" sobrescribe el archivo desde cero
 
@@ -145,16 +87,6 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Verificar si existe un número de expediente ─────────────────────────
 
-    /*
-     * Nombre: existeExpediente
-     * Propósito: Verifica si un número de expediente dado ya está registrado
-     *            en el archivo para evitar duplicados al crear nuevos expedientes.
-     * Precondiciones: numeroExpediente no debe ser nulo ni vacío
-     * Postcondiciones: Ninguna — no modifica el archivo ni la lista
-     * Argumentos: numeroExpediente — número de expediente a buscar (ej: EXP-00001)
-     * Valor que devuelve: boolean — true si el número ya existe, false si está disponible
-     * Versión: 1.0
-     */
     public static boolean existeExpediente(String numeroExpediente) { // Verifica si un número ya está en uso
         ArrayList<Paciente> lista = cargarTodosLosExpedientes(); // Carga todos los expedientes del archivo
         for (Paciente p : lista) { // Recorre cada paciente en la lista
@@ -167,15 +99,6 @@ public class ArchivoManager { // Clase utilitaria con métodos estáticos para o
 
     // ─── Obtener ruta del archivo ─────────────────────────────────────────────
 
-    /*
-     * Nombre: getRutaArchivo
-     * Propósito: Retorna la ruta completa del archivo de expedientes.
-     * Precondiciones: Ninguna
-     * Postcondiciones: Ninguna — no modifica el estado de la clase
-     * Argumentos: Ninguno
-     * Valor que devuelve: String — ruta relativa completa al archivo de expedientes
-     * Versión: 1.0
-     */
     public static String getRutaArchivo() { // Retorna la ruta completa del archivo de expedientes
         return ARCHIVO_PRINCIPAL;
     }

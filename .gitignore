@@ -1,0 +1,10 @@
+# Compiled Java class files
+*.class
+class/
+
+# macOS metadata
+.DS_Store
+
+# IDE and editor folders
+.idea/
+*.iml
