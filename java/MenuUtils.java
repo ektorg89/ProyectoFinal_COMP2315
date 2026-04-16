@@ -1,110 +1,172 @@
+/*
+ * Nombre del archivo: MenuUtils.java
+ * Propósito: Contiene los métodos para la interfaz de usuario: mensaje de bienvenida,
+ *            proceso de login con hasta 3 intentos, menú principal y mensaje de despedida.
+ *            Usa arreglos paralelos para validar las credenciales de acceso.
+ * Autor(es): Ektor M. Gonzalez - A00617167
+ *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
+ *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
+ *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ * Curso: COMP 2315 - Programación Estructurada
+ * Profesor: Dr. Edgardo Vargas Moya
+ * Fecha de creación: 04/14/2026
+ * Versión: 1.0
+ */
+
 // MenuUtils.java
-// Contiene los métodos para la interfaz de usuario: mensaje de bienvenida,
-// proceso de login con hasta 3 intentos, menú principal y mensaje de despedida.
-// Usa arreglos paralelos para validar las credenciales de acceso.
+// Métodos de interfaz de usuario usando exclusivamente conceptos de COMP 2315.
+// Sin .split(), sin .trim(), sin Integer.parseInt() sobre strings procesados.
 
-import javax.swing.JOptionPane; // Importa JOptionPane para mostrar todos los diálogos gráficos del sistema
+import javax.swing.JOptionPane;
 
-public class MenuUtils { // Clase utilitaria con métodos estáticos para la interfaz de usuario
+public class MenuUtils {
 
-    // ─── Credenciales hardcoded (usuario/contraseña) ──────────────────────────
+    // ─── Credenciales de acceso ───────────────────────────────────────────────
 
-    private static String[] USUARIOS = { "admin", "doctor" }; 
-    private static String[] CONTRASENAS = { "admin123", "doc2315" }; 
+    /* Arreglo con los nombres de usuario válidos —
+       cada posición corresponde a un usuario */
+    private static String[] USUARIOS = { "admin", "doctor" };
 
-    private static int MAX_INTENTOS = 3; // Número máximo de intentos de login antes de bloquear el acceso
+    /* Arreglo con las contraseñas correspondientes —
+       la posición [i] de USUARIOS coincide con [i] de CONTRASENAS */
+    private static String[] CONTRASENAS = { "admin123", "doc2315" };
+
+    private static int MAX_INTENTOS = 3; // Número máximo de intentos antes de bloquear
 
     // ─── Mensaje de bienvenida ────────────────────────────────────────────────
 
-    public static void mostrarMensajeBienvenida() { // Muestra la pantalla de presentación al iniciar la aplicación
-        String mensaje = // Construye el texto del mensaje con información del proyecto y los creadores
-            "╔══════════════════════════════════════════════════════╗\n" +
-            "         SISTEMA DE EXPEDIENTES MÉDICOS\n" +
-            "       Consultorio del Dr. Rodríguez\n" +
-            "══════════════════════════════════════════════════════\n\n" +
-            "  Desarrollado por:\n" +
-            "    • [NOMBRE 1]  — [NÚMERO ESTUDIANTE 1]\n" +
-            "    • [NOMBRE 2]  — [NÚMERO ESTUDIANTE 2]\n\n" +
-            "  COMP 2315 — Programación Estructurada\n" +
-            "  Universidad Interamericana de PR\n" +
-            "  Recinto de Aguadilla\n" +
-            "  Prof. Dr. Edgardo Vargas Moya\n" +
-            "  Sección: [SECCIÓN]\n" +
-            "  Fecha de entrega: [FECHA DE ENTREGA]\n\n" +
-            "  PROPÓSITO:\n" +
-            "  Esta aplicación permite al Dr. Rodríguez organizar,\n" +
-            "  crear, buscar y actualizar los expedientes médicos\n" +
-            "  de sus pacientes de manera digital y segura.\n\n" +
-            "╚══════════════════════════════════════════════════════╝";
+    /*
+     * Nombre: mostrarMensajeBienvenida
+     * Propósito: Muestra la pantalla de presentación al iniciar la aplicación.
+     * Precondiciones: Ninguna
+     * Postcondiciones: El diálogo fue mostrado y cerrado por el usuario
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
+    public static void mostrarMensajeBienvenida() {
+        String mensaje =
+            "======================================================\n" +
+            "       SISTEMA DE EXPEDIENTES MEDICOS\n"                   +
+            "     Consultorio del Dr. Rodriguez\n"                      +
+            "======================================================\n\n"+
+            "  Desarrollado por:\n"                                     +
+            "    * Ektor M. Gonzalez   - A00617167\n"                   +
+            "    * [NOMBRE 2]          - [NUMERO ESTUDIANTE 2]\n"       +
+            "    * [NOMBRE 3]          - [NUMERO ESTUDIANTE 3]\n"       +
+            "    * [NOMBRE 4]          - [NUMERO ESTUDIANTE 4]\n\n"     +
+            "  COMP 2315 - Programacion Estructurada\n"                 +
+            "  Universidad Interamericana de PR\n"                      +
+            "  Recinto de Aguadilla\n"                                  +
+            "  Prof. Dr. Edgardo Vargas Moya\n"                        +
+            "  Seccion: [SECCION]\n"                                    +
+            "  Fecha de entrega: [FECHA DE ENTREGA]\n\n"               +
+            "  PROPOSITO:\n"                                            +
+            "  Esta aplicacion permite al Dr. Rodriguez organizar,\n"   +
+            "  crear, buscar y actualizar los expedientes medicos\n"    +
+            "  de sus pacientes de manera digital y segura.\n\n"        +
+            "======================================================";
 
         JOptionPane.showMessageDialog(null,
             mensaje,
-            "Bienvenido al Sistema de Expedientes Médicos",
-            JOptionPane.INFORMATION_MESSAGE); // Muestra el mensaje con ícono de información
+            "Bienvenido al Sistema de Expedientes Medicos",
+            JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ─── Proceso de login ─────────────────────────────────────────────────────
 
-    public static boolean realizarLogin() { // Solicita credenciales y valida el acceso al sistema
-        int intentos = 0; // Contador de intentos fallidos — inicia en cero
+    /*
+     * Nombre: realizarLogin
+     * Propósito: Solicita credenciales y las valida contra los arreglos paralelos.
+     *            Permite hasta MAX_INTENTOS intentos antes de bloquear el acceso.
+     * Precondiciones: Ninguna
+     * Postcondiciones: Retorna true si el acceso fue concedido
+     * Argumentos: Ninguno
+     * Valor que devuelve: boolean — true si el login fue exitoso
+     * Versión: 1.0
+     */
+    public static boolean realizarLogin() {
+        int intentos = 0; // Contador de intentos fallidos
 
-        while (intentos < MAX_INTENTOS) { // Permite hasta MAX_INTENTOS (3) intentos antes de bloquear
+        while (intentos < MAX_INTENTOS) { // Permite hasta MAX_INTENTOS intentos
+
             String usuario = JOptionPane.showInputDialog(null,
                 "Ingrese su NOMBRE DE USUARIO:",
-                "Inicio de Sesión", JOptionPane.PLAIN_MESSAGE); // Solicita el nombre de usuario
+                "Inicio de Sesion", JOptionPane.PLAIN_MESSAGE);
 
-            if (usuario == null) return false; // Si presiona Cancelar, termina el login con fallo
+            if (usuario == null) return false; // Si presiona Cancelar, falla el login
 
             String contrasena = JOptionPane.showInputDialog(null,
-                "Ingrese su CONTRASEÑA:",
-                "Inicio de Sesión", JOptionPane.PLAIN_MESSAGE); // Solicita la contraseña
+                "Ingrese su CONTRASENA:",
+                "Inicio de Sesion", JOptionPane.PLAIN_MESSAGE);
 
-            if (contrasena == null) return false; // Si presiona Cancelar en la contraseña, falla el login
+            if (contrasena == null) return false; // Si presiona Cancelar, falla el login
 
-            if (validarCredenciales(usuario.trim(), contrasena.trim())) { // Verifica usuario y contraseña
+            if (validarCredenciales(usuario, contrasena)) { // Verifica las credenciales
                 JOptionPane.showMessageDialog(null,
-                    "¡Bienvenido, " + usuario.trim() + "!\n" +
+                    "Bienvenido, " + usuario + "!\n" +
                     "Acceso concedido al sistema.",
-                    "Login Exitoso", JOptionPane.INFORMATION_MESSAGE); // Informa el acceso exitoso
-                return true; // Retorna true — el login fue exitoso
-            } else { // Si las credenciales no coinciden
-                intentos++; // Incrementa el contador de intentos fallidos
-                int restantes = MAX_INTENTOS - intentos; // Calcula cuántos intentos quedan
+                    "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
+                return true; // Login exitoso
+            } else {
+                intentos++;
+                int restantes = MAX_INTENTOS - intentos;
 
-                if (restantes > 0) { // Si aún quedan intentos disponibles
+                if (restantes > 0) {
                     JOptionPane.showMessageDialog(null,
-                        "Usuario o contraseña incorrectos.\n" +
+                        "Usuario o contrasena incorrectos.\n" +
                         "Intentos restantes: " + restantes,
-                        "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
-                } else { // Si ya se agotaron todos los intentos
+                        "Error de Autenticacion", JOptionPane.ERROR_MESSAGE);
+                } else {
                     JOptionPane.showMessageDialog(null,
-                        "Número máximo de intentos alcanzado.\n" +
-                        "El sistema se cerrará por seguridad.",
+                        "Numero maximo de intentos alcanzado.\n" +
+                        "El sistema se cerrara por seguridad.",
                         "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
 
-        return false; // Si el bucle termina sin éxito, retorna false indicando acceso denegado
+        return false; // Se agotaron los intentos — acceso denegado
     }
 
     // ─── Validar credenciales ─────────────────────────────────────────────────
 
-    private static boolean validarCredenciales(String usuario, String contrasena) { // Compara credenciales contra los arreglos
-        for (int i = 0; i < USUARIOS.length; i++) { // Recorre cada posición de los arreglos paralelos
-            if (USUARIOS[i].equals(usuario) && CONTRASENAS[i].equals(contrasena)) { // Compara usuario Y contraseña
-                return true; // Si ambos coinciden en la misma posición, las credenciales son válidas
+    /*
+     * Nombre: validarCredenciales
+     * Propósito: Compara usuario y contraseña contra los arreglos paralelos.
+     * Precondiciones: pUsuario y pContrasena no deben ser nulos
+     * Postcondiciones: Ninguna
+     * Argumentos: pUsuario — nombre de usuario ingresado;
+     *             pContrasena — contraseña ingresada
+     * Valor que devuelve: boolean — true si las credenciales son válidas
+     * Versión: 1.0
+     */
+    private static boolean validarCredenciales(String pUsuario, String pContrasena) {
+        for (int i = 0; i < USUARIOS.length; i++) { // Recorre los arreglos paralelos
+            if (USUARIOS[i].equals(pUsuario) && CONTRASENAS[i].equals(pContrasena)) {
+                return true; // Credenciales válidas en la posición i
             }
         }
-        return false; // Si no encontró coincidencia, las credenciales son inválidas
+        return false; // No se encontró coincidencia
     }
 
     // ─── Mostrar menú principal ───────────────────────────────────────────────
 
-    public static int mostrarMenuPrincipal() { // Muestra el menú con las 6 opciones y retorna la opción elegida
-        String[] opciones = { // Arreglo con las opciones del menú principal
+    /*
+     * Nombre: mostrarMenuPrincipal
+     * Propósito: Muestra el menú con las 6 opciones del sistema y retorna el número
+     *            de la opción elegida. Usa un for loop con .equals() para identificar
+     *            la opción seleccionada (sin .split() ni Integer.parseInt()).
+     * Precondiciones: Ninguna
+     * Postcondiciones: Ninguna
+     * Argumentos: Ninguno
+     * Valor que devuelve: int — número de opción (1-6), o -1 si se cerró el diálogo
+     * Versión: 1.0
+     */
+    public static int mostrarMenuPrincipal() {
+        String[] opciones = { // Arreglo con las 6 opciones del menú principal
             "1. Crear nuevo expediente",
-            "2. Buscar expediente por número",
+            "2. Buscar expediente por numero",
             "3. Buscar expediente por fecha de visita",
             "4. Actualizar expediente",
             "5. Listar todos los expedientes",
@@ -112,33 +174,50 @@ public class MenuUtils { // Clase utilitaria con métodos estáticos para la int
         };
 
         String seleccion = (String) JOptionPane.showInputDialog(null,
-            "╔════════════════════════════════════╗\n" +
-            "    SISTEMA DE EXPEDIENTES MÉDICOS\n" +
-            "╚════════════════════════════════════╝\n\n" +
-            "Seleccione una opción:",
-            "Menú Principal",
+            "==============================\n" +
+            "  SISTEMA DE EXPEDIENTES\n"       +
+            "==============================\n\n"+
+            "Seleccione una opcion:",
+            "Menu Principal",
             JOptionPane.PLAIN_MESSAGE,
             null,
-            opciones, // Muestra el arreglo como lista desplegable
-            opciones[0]); // La primera opción aparece seleccionada por defecto
+            opciones,
+            opciones[0]); // Primera opción seleccionada por defecto
 
-        if (seleccion == null) return -1; // Si cierra la ventana o cancela, retorna -1 como señal especial
+        if (seleccion == null) return -1; // Cerró el diálogo sin seleccionar
 
-        return Integer.parseInt(seleccion.split("\\.")[0].trim()); // Extrae y retorna el número de la opción elegida
+        /* Busca cuál opción fue seleccionada comparando con .equals()
+           y retorna su posición + 1 como número de opción (sin .split()) */
+        for (int i = 0; i < opciones.length; i++) {
+            if (opciones[i].equals(seleccion)) {
+                return i + 1; // Retorna 1..6 según la posición encontrada
+            }
+        }
+
+        return -1; // No debería ocurrir, pero se maneja por seguridad
     }
 
     // ─── Mensaje de despedida ─────────────────────────────────────────────────
 
-    public static void mostrarMensajeDespedida() { // Muestra el mensaje final al cerrar la aplicación
+    /*
+     * Nombre: mostrarMensajeDespedida
+     * Propósito: Muestra el mensaje de cierre al terminar la aplicación.
+     * Precondiciones: Ninguna
+     * Postcondiciones: El diálogo fue mostrado y cerrado por el usuario
+     * Argumentos: Ninguno
+     * Valor que devuelve: void
+     * Versión: 1.0
+     */
+    public static void mostrarMensajeDespedida() {
         JOptionPane.showMessageDialog(null,
-            "╔══════════════════════════════════════════════════════╗\n" +
-            "     GRACIAS POR USAR EL SISTEMA DE EXPEDIENTES\n\n" +
-            "  El sistema se ha cerrado correctamente.\n" +
-            "  Todos los expedientes han sido guardados.\n\n" +
-            "  Consultorio del Dr. Rodríguez\n" +
-            "  COMP 2315 — Universidad Interamericana de PR\n" +
-            "╚══════════════════════════════════════════════════════╝",
-            "¡Hasta pronto!",
+            "======================================================\n" +
+            "    GRACIAS POR USAR EL SISTEMA DE EXPEDIENTES\n\n"        +
+            "  El sistema se ha cerrado correctamente.\n"               +
+            "  Todos los expedientes han sido guardados.\n\n"           +
+            "  Consultorio del Dr. Rodriguez\n"                         +
+            "  COMP 2315 - Universidad Interamericana de PR\n"          +
+            "======================================================",
+            "Hasta pronto!",
             JOptionPane.INFORMATION_MESSAGE);
     }
 }

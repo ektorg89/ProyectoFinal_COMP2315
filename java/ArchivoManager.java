@@ -1,105 +1,208 @@
+/*
+ * Nombre del archivo: ArchivoManager.java
+ * Propósito: Gestiona todas las operaciones de lectura y escritura de expedientes
+ *            médicos en el archivo "expedientes.txt". Usa FileReader + Scanner
+ *            para leer y PrintWriter para escribir (Lección 15).
+ * Autor(es): Ektor M. Gonzalez - A00617167
+ *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
+ *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
+ *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ * Curso: COMP 2315 - Programación Estructurada
+ * Profesor: Dr. Edgardo Vargas Moya
+ * Fecha de creación: 04/14/2026
+ * Versión: 1.0
+ */
+
 // ArchivoManager.java
-// Gestiona todas las operaciones de lectura y escritura de expedientes
-// médicos en el archivo de texto "data/expedientes.txt". Provee métodos
-// para guardar, cargar, reescribir y verificar expedientes en disco.
+// Lectura con FileReader + Scanner, escritura con PrintWriter (Lección 15).
+// Sin BufferedReader, BufferedWriter, FileWriter ni java.io.File.
 
-import java.io.*; // Importa todas las clases necesarias para manejo de archivos (File, BufferedReader, BufferedWriter, etc.)
-import java.util.ArrayList; // Importa ArrayList para almacenar la lista de pacientes cargados
+import java.io.*;
+import java.util.Scanner;
 
-public class ArchivoManager { // Clase utilitaria con métodos estáticos para operaciones de archivos
+public class ArchivoManager {
 
-    // ─── Ruta de la carpeta de datos ─────────────────────────────────────────
-
-    private static String CARPETA_DATA = "data" + File.separator; 
-    private static String ARCHIVO_PRINCIPAL = CARPETA_DATA + "expedientes.txt"; // Ruta completa al archivo de expedientes
-
-    // ─── Inicialización ───────────────────────────────────────────────────────
-
-    public static void inicializarCarpeta() { // Verifica y crea la carpeta "data" si no existe
-        File carpeta = new File(CARPETA_DATA); // Crea un objeto File apuntando a la carpeta "data"
-        if (!carpeta.exists()) { // Si la carpeta no existe en el sistema de archivos
-            carpeta.mkdirs(); // La crea junto con cualquier directorio padre necesario
-        }
-    }
+    /* Ruta del archivo de expedientes — sin subcarpeta porque java.io.File
+       no está en el currículo de COMP 2315 */
+    private static String ARCHIVO_PRINCIPAL = "expedientes.txt";
 
     // ─── Guardar un expediente ────────────────────────────────────────────────
 
-    public static boolean guardarExpediente(Paciente paciente) { 
-        try (BufferedWriter bw = new BufferedWriter(
-                new FileWriter(ARCHIVO_PRINCIPAL, true))) { // "true" activa el modo append (agregar al final)
+    /*
+     * Nombre: guardarExpediente
+     * Propósito: Agrega un nuevo paciente al sistema cargando la lista completa,
+     *            añadiendo el nuevo registro y reescribiendo el archivo entero.
+     *            (FileWriter en modo append no es parte del currículo — Lección 15.)
+     * Precondiciones: pPaciente no debe ser nulo
+     * Postcondiciones: El paciente queda guardado en el archivo
+     * Argumentos: pPaciente — objeto Paciente con los datos a guardar
+     * Valor que devuelve: boolean — true si se guardó correctamente
+     * Versión: 1.0
+     */
+    public static boolean guardarExpediente(Paciente pPaciente) {
+        Paciente[] lista = cargarTodosLosExpedientes();  // Carga los expedientes existentes
+        int total = contarExpedientes(lista);            // Cuenta cuántos hay actualmente
 
-            bw.write(paciente.toFileString()); // Escribe los datos del paciente en formato separado por "|"
-            bw.newLine(); // Agrega un salto de línea para separar cada expediente
-            return true; // Retorna true indicando que el guardado fue exitoso
-
-        } catch (IOException e) { // Captura errores de entrada/salida (disco lleno, permisos, etc.)
-            System.err.println("Error al guardar expediente: " + e.getMessage()); // Muestra el error en consola
-            return false; // Retorna false indicando que el guardado falló
+        if (total < 100) {                               // Solo agrega si hay espacio en el arreglo
+            lista[total] = pPaciente;
+            total++;
         }
+
+        return reescribirTodosLosExpedientes(lista, total); // Reescribe el archivo completo
     }
 
     // ─── Cargar todos los expedientes ─────────────────────────────────────────
 
-    public static ArrayList<Paciente> cargarTodosLosExpedientes() { // Lee el archivo y retorna todos los expedientes
-        ArrayList<Paciente> lista = new ArrayList<>(); // Crea una lista vacía para almacenar los pacientes
-        File archivo = new File(ARCHIVO_PRINCIPAL); // Crea un objeto File apuntando al archivo principal
+    /*
+     * Nombre: cargarTodosLosExpedientes
+     * Propósito: Lee el archivo línea por línea usando FileReader + Scanner y
+     *            construye un arreglo de Paciente[100] con los registros leídos.
+     *            Lee 13 líneas consecutivas por paciente (un campo por línea).
+     * Precondiciones: Ninguna — si el archivo no existe retorna arreglo vacío
+     * Postcondiciones: Retorna un arreglo con todos los pacientes del archivo
+     * Argumentos: Ninguno
+     * Valor que devuelve: Paciente[] — arreglo de 100 posiciones (slots no usados = null)
+     * Versión: 1.0
+     */
+    public static Paciente[] cargarTodosLosExpedientes() {
+        Paciente[] lista = new Paciente[100]; // Arreglo fijo de máximo 100 pacientes
+        int total = 0;
 
-        if (!archivo.exists()) return lista; // Si el archivo no existe, retorna la lista vacía sin errores
+        try {
+            FileReader reader = new FileReader(ARCHIVO_PRINCIPAL); // Abre el archivo para lectura
+            Scanner sc = new Scanner(reader);                      // Scanner lee línea a línea
 
-        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) { // Abre el archivo para lectura
-            String linea; // Variable para almacenar cada línea leída
+            while (sc.hasNextLine() && total < 100) { // Lee mientras haya líneas y haya espacio
+                String numExp   = sc.nextLine(); // Campo 1: número de expediente
+                String nom      = sc.nextLine(); // Campo 2: nombre
+                String ini      = sc.nextLine(); // Campo 3: inicial
+                String ape      = sc.nextLine(); // Campo 4: apellidos
+                String ss       = sc.nextLine(); // Campo 5: seguro social
+                String fechaNac = sc.nextLine(); // Campo 6: fecha de nacimiento
+                String sex      = sc.nextLine(); // Campo 7: sexo
+                String dir      = sc.nextLine(); // Campo 8: dirección
+                String plan     = sc.nextLine(); // Campo 9: plan médico
+                String fVisita  = sc.nextLine(); // Campo 10: fecha de visita
+                String diag     = sc.nextLine(); // Campo 11: diagnóstico
+                String rec      = sc.nextLine(); // Campo 12: receta
+                String fSig     = sc.nextLine(); // Campo 13: fecha siguiente visita
 
-            while ((linea = br.readLine()) != null) { // Lee línea por línea hasta llegar al final del archivo
-                linea = linea.trim(); // Elimina espacios en blanco al inicio y final de la línea
-                if (!linea.isEmpty()) { // Ignora las líneas vacías
-                    Paciente p = Paciente.fromFileString(linea); // Convierte la línea de texto en un objeto Paciente
-                    if (p != null) { // Si la conversión fue exitosa (la línea tenía todos los campos)
-                        lista.add(p); // Agrega el paciente a la lista
-                    }
-                }
+                lista[total] = new Paciente(nom, ini, ape, ss, numExp,
+                                            fechaNac, sex, dir, plan,
+                                            fVisita, diag, rec, fSig);
+                total++;
             }
 
-        } catch (IOException e) { // Captura errores de lectura del archivo
-            System.err.println("Error al cargar expedientes: " + e.getMessage()); // Muestra el error en consola
+            sc.close(); // Cierra el scanner dentro del try (Lección 15 — sin try-with-resources)
+
+        } catch (IOException e) {
+            /* Si el archivo no existe aún (primera ejecución) simplemente
+               retorna el arreglo vacío — no es un error crítico */
+            System.out.println("Archivo no encontrado o error de lectura: " + e);
         }
 
-        return lista; // Retorna la lista con todos los pacientes cargados
+        return lista; // Retorna el arreglo (slots sin usar son null)
+    }
+
+    // ─── Contar expedientes en el arreglo ────────────────────────────────────
+
+    /*
+     * Nombre: contarExpedientes
+     * Propósito: Cuenta cuántos slots del arreglo están ocupados (no son null).
+     * Precondiciones: lista no debe ser nulo
+     * Postcondiciones: Ninguna
+     * Argumentos: lista — arreglo de Paciente a contar
+     * Valor que devuelve: int — número de expedientes no nulos en el arreglo
+     * Versión: 1.0
+     */
+    public static int contarExpedientes(Paciente[] lista) {
+        int count = 0;
+        for (int i = 0; i < lista.length; i++) { // Recorre todo el arreglo
+            if (lista[i] != null) {               // Cuenta solo los slots ocupados
+                count++;
+            }
+        }
+        return count;
     }
 
     // ─── Reescribir todos los expedientes ────────────────────────────────────
 
-    public static boolean reescribirTodosLosExpedientes(ArrayList<Paciente> lista) { 
-        try (BufferedWriter bw = new BufferedWriter(
-                new FileWriter(ARCHIVO_PRINCIPAL, false))) { // "false" sobrescribe el archivo desde cero
+    /*
+     * Nombre: reescribirTodosLosExpedientes
+     * Propósito: Sobrescribe el archivo completo con los expedientes del arreglo.
+     *            Usa PrintWriter (Lección 15) y escribe un campo por línea.
+     * Precondiciones: lista no debe ser nulo; total indica cuántos escribir
+     * Postcondiciones: El archivo contiene únicamente los expedientes del arreglo
+     * Argumentos: lista — arreglo con los pacientes a guardar;
+     *             total — número de pacientes válidos en el arreglo
+     * Valor que devuelve: boolean — true si la escritura fue exitosa
+     * Versión: 1.0
+     */
+    public static boolean reescribirTodosLosExpedientes(Paciente[] lista, int total) {
+        try {
+            PrintWriter output = new PrintWriter(ARCHIVO_PRINCIPAL); // Abre/crea el archivo
 
-            for (int i = 0; i < lista.size(); i++) { // Recorre cada paciente en la lista con índice
-                Paciente p = lista.get(i); // Obtiene el paciente en la posición actual
-                bw.write(p.toFileString()); // Escribe los datos del paciente en el archivo
-                bw.newLine(); // Agrega salto de línea entre cada expediente
+            for (int i = 0; i < total; i++) { // Escribe cada paciente campo por campo
+                output.println(lista[i].getNumeroExpediente());  // Campo 1
+                output.println(lista[i].getNombre());            // Campo 2
+                output.println(lista[i].getInicial());           // Campo 3
+                output.println(lista[i].getApellidos());         // Campo 4
+                output.println(lista[i].getSeguroSocial());      // Campo 5
+                output.println(lista[i].getFechaNacimiento());   // Campo 6
+                output.println(lista[i].getSexo());              // Campo 7
+                output.println(lista[i].getDireccion());         // Campo 8
+                output.println(lista[i].getPlanMedico());        // Campo 9
+                output.println(lista[i].getFechaVisita());       // Campo 10
+                output.println(lista[i].getDiagnostico());       // Campo 11
+                output.println(lista[i].getReceta());            // Campo 12
+                output.println(lista[i].getFechaSiguienteVisita()); // Campo 13
             }
-            return true; // Retorna true si todos los expedientes se escribieron correctamente
 
-        } catch (IOException e) { // Captura errores de escritura
-            System.err.println("Error al reescribir expedientes: " + e.getMessage()); // Muestra el error
-            return false; // Retorna false si ocurrió algún error
+            output.close(); // Cierra el PrintWriter dentro del try (Lección 15)
+            return true;    // Escritura exitosa
+
+        } catch (IOException e) {
+            System.out.println("Error al guardar expedientes: " + e);
+            return false;   // Escritura fallida
         }
     }
 
     // ─── Verificar si existe un número de expediente ─────────────────────────
 
-    public static boolean existeExpediente(String numeroExpediente) { // Verifica si un número ya está en uso
-        ArrayList<Paciente> lista = cargarTodosLosExpedientes(); // Carga todos los expedientes del archivo
-        for (Paciente p : lista) { // Recorre cada paciente en la lista
-            if (p.getNumeroExpediente().equalsIgnoreCase(numeroExpediente)) { // Compara sin importar mayúsculas
-                return true; // Retorna true si ya existe ese número de expediente
+    /*
+     * Nombre: existeExpediente
+     * Propósito: Verifica si un número de expediente ya está en uso en el archivo
+     *            para evitar duplicados al generar nuevos números.
+     * Precondiciones: pNumeroExpediente no debe ser nulo
+     * Postcondiciones: Ninguna — no modifica el archivo
+     * Argumentos: pNumeroExpediente — número a buscar (ya en mayúsculas, ej: EXP-00001)
+     * Valor que devuelve: boolean — true si el número ya existe
+     * Versión: 1.0
+     */
+    public static boolean existeExpediente(String pNumeroExpediente) {
+        Paciente[] lista = cargarTodosLosExpedientes(); // Carga todos los expedientes
+        int total = contarExpedientes(lista);
+
+        for (int i = 0; i < total; i++) { // Busca en todos los expedientes cargados
+            if (lista[i].getNumeroExpediente().equals(pNumeroExpediente)) {
+                return true; // El número ya está en uso
             }
         }
-        return false; // Retorna false si el número no está en uso
+        return false; // El número está disponible
     }
 
     // ─── Obtener ruta del archivo ─────────────────────────────────────────────
 
-    public static String getRutaArchivo() { // Retorna la ruta completa del archivo de expedientes
+    /*
+     * Nombre: getRutaArchivo
+     * Propósito: Retorna la ruta del archivo de expedientes.
+     * Precondiciones: Ninguna
+     * Postcondiciones: Ninguna
+     * Argumentos: Ninguno
+     * Valor que devuelve: String — ruta del archivo de expedientes
+     * Versión: 1.0
+     */
+    public static String getRutaArchivo() {
         return ARCHIVO_PRINCIPAL;
     }
 }
