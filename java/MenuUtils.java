@@ -4,9 +4,9 @@
  *            proceso de login con hasta 3 intentos, menú principal y mensaje de despedida.
  *            Usa arreglos paralelos para validar las credenciales de acceso.
  * Autor(es): Ektor M. Gonzalez - A00617167
- *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
- *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
- *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ *            Diego L. Rodriguez Perez - A00636906
+ *            Donovan Irizarry Figueroa - A00671799
+ *            Carlos Ramos - A00642991
  * Curso: COMP 2315 - Programación Estructurada
  * Profesor: Dr. Edgardo Vargas Moya
  * Fecha de creación: 04/14/2026
@@ -52,15 +52,15 @@ public class MenuUtils {
             "======================================================\n\n"+
             "  Desarrollado por:\n"                                     +
             "    * Ektor M. Gonzalez   - A00617167\n"                   +
-            "    * [NOMBRE 2]          - [NUMERO ESTUDIANTE 2]\n"       +
-            "    * [NOMBRE 3]          - [NUMERO ESTUDIANTE 3]\n"       +
-            "    * [NOMBRE 4]          - [NUMERO ESTUDIANTE 4]\n\n"     +
+            "    * Diego L. Rodriguez Perez  - A00636906\n"             +
+            "    * Donovan Irizarry Figueroa - A00671799\n"             +
+            "    * Carlos Ramos              - A00642991\n\n"           +
             "  COMP 2315 - Programacion Estructurada\n"                 +
             "  Universidad Interamericana de PR\n"                      +
             "  Recinto de Aguadilla\n"                                  +
             "  Prof. Dr. Edgardo Vargas Moya\n"                        +
-            "  Seccion: [SECCION]\n"                                    +
-            "  Fecha de entrega: [FECHA DE ENTREGA]\n\n"               +
+            "  Seccion: 202630.73752\n"                                 +
+            "  Fecha de entrega: Por anunciarse\n\n"                   +
             "  PROPOSITO:\n"                                            +
             "  Esta aplicacion permite al Dr. Rodriguez organizar,\n"   +
             "  crear, buscar y actualizar los expedientes medicos\n"    +

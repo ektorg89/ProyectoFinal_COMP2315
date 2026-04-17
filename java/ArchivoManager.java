@@ -4,9 +4,9 @@
  *            médicos en el archivo "expedientes.txt". Usa FileReader + Scanner
  *            para leer y PrintWriter para escribir (Lección 15).
  * Autor(es): Ektor M. Gonzalez - A00617167
- *            [NOMBRE 2] - [NÚMERO ESTUDIANTE 2]
- *            [NOMBRE 3] - [NÚMERO ESTUDIANTE 3]
- *            [NOMBRE 4] - [NÚMERO ESTUDIANTE 4]
+ *            Diego L. Rodriguez Perez - A00636906
+ *            Donovan Irizarry Figueroa - A00671799
+ *            Carlos Ramos - A00642991
  * Curso: COMP 2315 - Programación Estructurada
  * Profesor: Dr. Edgardo Vargas Moya
  * Fecha de creación: 04/14/2026
