@@ -15,7 +15,7 @@
 
 // Validador.java
 // Métodos estáticos de validación para los campos del expediente médico.
-// No usa expresiones regulares ni SimpleDateFormat (no son de COMP 2315).
+// Usa charAt() y length() para validar formatos — sin regex ni SimpleDateFormat.
 
 public class Validador {
 
@@ -23,46 +23,106 @@ public class Validador {
 
     /*
      * Nombre: validarSeguroSocial
-     * Propósito: Verifica que el seguro social no sea nulo ni vacío.
+     * Propósito: Verifica que el seguro social tenga el formato XXX-XX-XXXX
+     *            usando charAt() y length() — sin expresiones regulares.
+     *            Longitud exacta: 11 caracteres.
+     *            Posiciones 0-2: dígitos; 3: '-'; 4-5: dígitos; 6: '-'; 7-10: dígitos.
      * Precondiciones: Ninguna
      * Postcondiciones: Ninguna
      * Argumentos: ss — cadena de texto con el seguro social a validar
-     * Valor que devuelve: boolean — true si no es nulo ni vacío
-     * Versión: 1.0
+     * Valor que devuelve: boolean — true si cumple el formato XXX-XX-XXXX
+     * Versión: 2.0
      */
     public static boolean validarSeguroSocial(String ss) {
-        return ss != null && !ss.equals("");  // Acepta cualquier texto no vacío
+        if (ss == null || ss.length() != 11) { // Debe tener exactamente 11 caracteres
+            return false;
+        }
+
+        /* Verifica cada posición: dígitos en 0-2, guión en 3,
+           dígitos en 4-5, guión en 6, dígitos en 7-10 */
+        boolean pos0 = ss.charAt(0) >= '0' && ss.charAt(0) <= '9';
+        boolean pos1 = ss.charAt(1) >= '0' && ss.charAt(1) <= '9';
+        boolean pos2 = ss.charAt(2) >= '0' && ss.charAt(2) <= '9';
+        boolean gui1 = ss.charAt(3) == '-';
+        boolean pos4 = ss.charAt(4) >= '0' && ss.charAt(4) <= '9';
+        boolean pos5 = ss.charAt(5) >= '0' && ss.charAt(5) <= '9';
+        boolean gui2 = ss.charAt(6) == '-';
+        boolean pos7 = ss.charAt(7) >= '0' && ss.charAt(7) <= '9';
+        boolean pos8 = ss.charAt(8) >= '0' && ss.charAt(8) <= '9';
+        boolean pos9 = ss.charAt(9) >= '0' && ss.charAt(9) <= '9';
+        boolean posA = ss.charAt(10) >= '0' && ss.charAt(10) <= '9';
+
+        return pos0 && pos1 && pos2 && gui1 && pos4 && pos5
+               && gui2 && pos7 && pos8 && pos9 && posA;
     }
 
     // ─── Validación de número de expediente ──────────────────────────────────
 
     /*
      * Nombre: validarNumeroExpediente
-     * Propósito: Verifica que el número de expediente no sea nulo ni vacío.
+     * Propósito: Verifica que el número de expediente tenga el formato EXP-DDDDD
+     *            usando charAt() y length() — sin expresiones regulares.
+     *            Longitud exacta: 9 caracteres.
+     *            Posiciones 0-2: "EXP"; 3: '-'; 4-8: dígitos.
      * Precondiciones: Ninguna
      * Postcondiciones: Ninguna
      * Argumentos: exp — cadena de texto con el número de expediente
-     * Valor que devuelve: boolean — true si no es nulo ni vacío
-     * Versión: 1.0
+     * Valor que devuelve: boolean — true si cumple el formato EXP-DDDDD
+     * Versión: 2.0
      */
     public static boolean validarNumeroExpediente(String exp) {
-        return exp != null && !exp.equals("");
+        if (exp == null || exp.length() != 9) { // Debe tener exactamente 9 caracteres
+            return false;
+        }
+
+        /* Verifica el prefijo "EXP-" y que los últimos 5 sean dígitos */
+        boolean prefE  = exp.charAt(0) == 'E';
+        boolean prefX  = exp.charAt(1) == 'X';
+        boolean prefP  = exp.charAt(2) == 'P';
+        boolean gui    = exp.charAt(3) == '-';
+        boolean dig4   = exp.charAt(4) >= '0' && exp.charAt(4) <= '9';
+        boolean dig5   = exp.charAt(5) >= '0' && exp.charAt(5) <= '9';
+        boolean dig6   = exp.charAt(6) >= '0' && exp.charAt(6) <= '9';
+        boolean dig7   = exp.charAt(7) >= '0' && exp.charAt(7) <= '9';
+        boolean dig8   = exp.charAt(8) >= '0' && exp.charAt(8) <= '9';
+
+        return prefE && prefX && prefP && gui && dig4 && dig5 && dig6 && dig7 && dig8;
     }
 
     // ─── Validación de fecha ─────────────────────────────────────────────────
 
     /*
      * Nombre: validarFecha
-     * Propósito: Verifica que la fecha no sea nula ni vacía.
-     *            El usuario es responsable de respetar el formato MM/DD/YYYY.
+     * Propósito: Verifica que la fecha tenga el formato MM/DD/YYYY
+     *            usando charAt() y length() — sin SimpleDateFormat ni regex.
+     *            Longitud exacta: 10 caracteres.
+     *            Posiciones 0-1: dígitos (mes); 2: '/'; 3-4: dígitos (día);
+     *            5: '/'; 6-9: dígitos (año).
      * Precondiciones: Ninguna
      * Postcondiciones: Ninguna
      * Argumentos: fecha — cadena de texto con la fecha a validar
-     * Valor que devuelve: boolean — true si no es nula ni vacía
-     * Versión: 1.0
+     * Valor que devuelve: boolean — true si cumple el formato MM/DD/YYYY
+     * Versión: 2.0
      */
     public static boolean validarFecha(String fecha) {
-        return fecha != null && !fecha.equals("");
+        if (fecha == null || fecha.length() != 10) { // Debe tener exactamente 10 caracteres
+            return false;
+        }
+
+        /* Verifica dígitos en mes (0-1), barras en posición 2 y 5,
+           dígitos en día (3-4) y año (6-9) */
+        boolean mes1  = fecha.charAt(0) >= '0' && fecha.charAt(0) <= '9';
+        boolean mes2  = fecha.charAt(1) >= '0' && fecha.charAt(1) <= '9';
+        boolean bar1  = fecha.charAt(2) == '/';
+        boolean dia1  = fecha.charAt(3) >= '0' && fecha.charAt(3) <= '9';
+        boolean dia2  = fecha.charAt(4) >= '0' && fecha.charAt(4) <= '9';
+        boolean bar2  = fecha.charAt(5) == '/';
+        boolean any1  = fecha.charAt(6) >= '0' && fecha.charAt(6) <= '9';
+        boolean any2  = fecha.charAt(7) >= '0' && fecha.charAt(7) <= '9';
+        boolean any3  = fecha.charAt(8) >= '0' && fecha.charAt(8) <= '9';
+        boolean any4  = fecha.charAt(9) >= '0' && fecha.charAt(9) <= '9';
+
+        return mes1 && mes2 && bar1 && dia1 && dia2 && bar2 && any1 && any2 && any3 && any4;
     }
 
     // ─── Validación de sexo ──────────────────────────────────────────────────

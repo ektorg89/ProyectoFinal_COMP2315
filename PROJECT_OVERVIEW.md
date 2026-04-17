@@ -7,16 +7,16 @@
 | Curso | COMP 2315 — Programación Estructurada |
 | Universidad | Universidad Interamericana de PR, Recinto de Aguadilla |
 | Profesor | Dr. Edgardo Vargas Moya |
-| Sección | [SECCIÓN] |
+| Sección | 202630.73752 |
 
 ## Grupo de Trabajo
 
 | # | Nombre | Número de Estudiante |
 |---|---|---|
-| 1 | [NOMBRE 1] | [NÚMERO ESTUDIANTE 1] |
-| 2 | [NOMBRE 2] | [NÚMERO ESTUDIANTE 2] |
-| 3 | [NOMBRE 3] | [NÚMERO ESTUDIANTE 3] |
-| 4 | [NOMBRE 4] | [NÚMERO ESTUDIANTE 4] |
+| 1 | Ektor M. Gonzalez | A00617167 |
+| 2 | Diego L. Rodriguez Perez | A00636906 |
+| 3 | Donovan Irizarry Figueroa | A00671799 |
+| 4 | Carlos Ramos | A00642991 |
 
 ## Descripción del Proyecto
 
@@ -24,17 +24,17 @@ Sistema de expedientes médicos para el consultorio del Dr. Rodríguez. Aplicaci
 
 ## Entregas
 
-### Entrega 1 — [FECHA ENTREGA 1]
+### Entrega 1 — Por anunciarse
 - Diseño de clases y estructura del proyecto
 - Diagrama de flujogramas
 - Prototipo funcional básico
 
-### Entrega 2 — [FECHA ENTREGA 2]
+### Entrega 2 — Por anunciarse
 - Código fuente completo y funcional
 - Archivo de datos generado correctamente
 - Todas las validaciones implementadas
 
-### Entrega 3 (Final) — [FECHA ENTREGA FINAL]
+### Entrega 3 (Final) — Por anunciarse
 - Informe escrito completo
 - Presentación oral
 - Código final revisado y comentado
@@ -43,19 +43,17 @@ Sistema de expedientes médicos para el consultorio del Dr. Rodríguez. Aplicaci
 
 ```
 ProyectoFinal_COMP2315/
-├── src/
+├── java/
 │   ├── Main.java
 │   ├── Paciente.java
 │   ├── ExpedienteManager.java
 │   ├── ArchivoManager.java
 │   ├── Validador.java
 │   └── MenuUtils.java
-├── data/
-│   └── expedientes.txt        (generado al correr)
+├── class/                     (archivos .class compilados)
 ├── docs/
-│   ├── Flujogramas.html
-│   ├── Informe_ProyectoFinal.html
-│   └── Presentacion_ProyectoFinal.html
+│   └── Documentacion_ProyectoFinal_v2.docx
+├── expedientes.txt            (generado al correr)
 ├── PROJECT_OVERVIEW.md
 ├── REQUIREMENTS.md
 ├── ARCHITECTURE.md
@@ -67,9 +65,8 @@ ProyectoFinal_COMP2315/
 
 ```bash
 # Desde la carpeta ProyectoFinal_COMP2315/
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-javac -d . src/*.java
-java Main
+javac -d class java/*.java
+java -cp class Main
 ```
 
 **Credenciales:** `admin` / `admin123` — `doctor` / `doc2315`

@@ -46,6 +46,13 @@ public class ArchivoManager {
         if (total < 100) {                               // Solo agrega si hay espacio en el arreglo
             lista[total] = pPaciente;
             total++;
+        } else {                                         // Arreglo lleno — informa al usuario
+            javax.swing.JOptionPane.showMessageDialog(null,
+                "El sistema ha alcanzado el limite de 100 expedientes.\n" +
+                "No se puede agregar un nuevo expediente.",
+                "Capacidad Maxima Alcanzada",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;                                // No intenta reescribir el archivo
         }
 
         return reescribirTodosLosExpedientes(lista, total); // Reescribe el archivo completo

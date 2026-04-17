@@ -4,7 +4,7 @@
 
 ### Implementación
 - [x] `Paciente.java` — modelo con 13 campos, getters, setters, serialización
-- [x] `Validador.java` — regex SS, regex fecha, sexo, no vacío, capitalizar
+- [x] `Validador.java` — charAt()/length() SS y fechas, sexo, no vacío, capitalizar
 - [x] `ArchivoManager.java` — guardar, cargar, reescribir, verificar existencia
 - [x] `ExpedienteManager.java` — crear, buscar por número, buscar por fecha, actualizar, listar
 - [x] `MenuUtils.java` — bienvenida, login con 3 intentos, menú principal, despedida
@@ -19,16 +19,14 @@
 - [x] Mensaje de bienvenida con JOptionPane
 - [x] Mensaje de despedida con JOptionPane
 - [x] Login con usuario/contraseña (hardcoded)
-- [x] `ArrayList<Paciente>` para lista en memoria
+- [x] `Paciente[100]` (arreglo fijo) para lista en memoria
 - [x] Arreglos paralelos (USUARIOS / CONTRASENAS)
 - [x] Métodos propios definidos
-- [x] Métodos predefinidos de Java (`String.format`, `Pattern.compile`, `SimpleDateFormat`, etc.)
-- [x] `java.io.*` importado y usado
-- [x] `java.util.*` importado y usado
+- [x] Métodos predefinidos de Java (`charAt()`, `length()`, `.equals()`, etc.)
+- [x] `java.io.*` importado y usado (FileReader, PrintWriter)
+- [x] `java.util.Scanner` importado y usado
 - [x] `javax.swing.*` importado y usado
-- [x] `java.text.*` importado y usado
-- [x] `java.util.regex.*` importado y usado
-- [x] Guardar expedientes en archivo (`data/expedientes.txt`)
+- [x] Guardar expedientes en archivo (`expedientes.txt`)
 - [x] Buscar por número de expediente
 - [x] Buscar por fecha de visita
 - [x] Actualizar expediente con submenú
@@ -38,7 +36,7 @@
 - [x] Encabezado estilo `SumProd.java` en los 6 archivos
 - [x] Comentarios en español línea por línea
 - [x] Flujogramas separados del código (en `docs/Flujogramas.html`)
-- [ ] **Reemplazar placeholders** `[NOMBRE 1]`, `[NOMBRE 2]`, `[SECCIÓN]`, etc. en los 6 archivos
+- [x] **Reemplazar placeholders** en los 6 archivos .java con nombres y datos reales
 
 ---
 
@@ -77,9 +75,9 @@
 
 ## Pendiente General
 
-- [ ] Llenar nombres y números de estudiante en los 6 `.java`, informe y presentación
-- [ ] Completar `PROJECT_OVERVIEW.md` con fechas reales de entregas
-- [ ] Completar `REQUIREMENTS.md` con duración y fecha de presentación
+- [x] Llenar nombres y números de estudiante en los 6 `.java` y documentación
+- [ ] Actualizar fechas de entregas cuando el profesor las anuncie
+- [ ] Actualizar duración y fecha de presentación cuando el profesor las anuncie
 - [ ] Tomar capturas de pantalla del sistema funcionando
 - [ ] Probar flujo completo: crear → buscar → actualizar → listar → salir
 - [ ] Verificar que `data/expedientes.txt` se genera correctamente
@@ -91,8 +89,8 @@
 
 ```
 Código:          ████████████████████ 100%
-Flujogramas:     ████████████████████ 100%
-Informe (base):  ████████████████░░░░  80%  ← falta personalizar + capturas
-Presentación:    ████████████████░░░░  80%  ← falta personalizar
-Placeholders:    ░░░░░░░░░░░░░░░░░░░░   0%  ← pendiente del equipo
+Documentación:   ████████████████████ 100%
+Placeholders:    ████████████████████ 100%
+Informe Word:    ████████░░░░░░░░░░░░  40%  ← falta capturas + formato + bitácora
+Presentación:    ░░░░░░░░░░░░░░░░░░░░   0%  ← por preparar
 ```

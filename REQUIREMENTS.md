@@ -13,19 +13,17 @@
 - [ ] `switch`
 
 ### Arreglos
-- [ ] Usar `ArrayList<Paciente>` para manejar la lista en memoria
-- [ ] Usar arreglos paralelos (ej: usuarios y contraseñas)
+- [x] Usar `Paciente[100]` (arreglo fijo) para manejar la lista en memoria
+- [x] Usar arreglos paralelos (ej: usuarios y contraseñas)
 
 ### Métodos
 - [ ] Métodos propios definidos por el programador
 - [ ] Métodos predefinidos de Java (String, Math, etc.)
 
 ### Paquetes a Importar
-- [ ] `java.io.*`
-- [ ] `java.util.*`
-- [ ] `javax.swing.*`
-- [ ] `java.text.*`
-- [ ] `java.util.regex.*`
+- [x] `java.io.*` (FileReader, PrintWriter, IOException)
+- [x] `java.util.Scanner`
+- [x] `javax.swing.*` (JOptionPane)
 
 ### Archivos
 - [ ] Guardar cada expediente en archivo
@@ -51,16 +49,16 @@
 | # | Campo | Formato | Validación |
 |---|---|---|---|
 | 1 | Nombre, Inicial, Apellidos | `Nombre I. Apellido Apellido` | No vacío |
-| 2 | Seguro Social | `XXX-XX-XXXX` | Regex |
-| 3 | Número de Expediente | `EXP-XXXXX` | Automático |
-| 4 | Fecha de Nacimiento | `MM/DD/YYYY` | Regex + parse |
-| 5 | Sexo | `M` o `F` | Lista fija |
+| 2 | Seguro Social | `XXX-XX-XXXX` | charAt() + length() |
+| 3 | Número de Expediente | `EXP-DDDDD` | Automático |
+| 4 | Fecha de Nacimiento | `MM/DD/YYYY` | charAt() + length() |
+| 5 | Sexo | `M` o `F` | .equals() |
 | 6 | Dirección | `Calle, Ciudad, Estado, Zip` | No vacío |
-| 7 | Plan Médico | Lista predefinida | Selección |
-| 8 | Fecha de Visita | `MM/DD/YYYY` | Regex + parse |
+| 7 | Plan Médico | Lista predefinida | Selección JOptionPane |
+| 8 | Fecha de Visita | `MM/DD/YYYY` | charAt() + length() |
 | 9 | Diagnóstico | Texto libre | No vacío |
 | 10 | Receta | Texto libre | Opcional |
-| 11 | Fecha de Siguiente Visita | `MM/DD/YYYY` | Regex + parse |
+| 11 | Fecha de Siguiente Visita | `MM/DD/YYYY` | charAt() + length() |
 
 **Planes médicos aceptados:** Triple-S, MMM, MCS, Molina, First Medical, Otro
 
@@ -95,5 +93,5 @@
 - [ ] Presentación oral del proyecto
 - [ ] Demostración del sistema funcionando
 - [ ] Todos los integrantes participan
-- [ ] Duración: [DURACIÓN] minutos
-- [ ] Fecha: [FECHA PRESENTACIÓN]
+- [ ] Duración: Por anunciarse
+- [ ] Fecha: Por anunciarse
