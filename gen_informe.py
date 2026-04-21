@@ -33,7 +33,7 @@ TEAM = [
     ('Ektor M. Gonzalez Ramos',       'A00617167'),
     ('Diego L. Rodriguez Perez',       'A00636906'),
     ('Donovan Irizarry Figueroa',      'A00671799'),
-    ('Carlos Ramos',                   'A00642991'),
+    ('Carlo Ramos',                   'A00642991'),
 ]
 COURSE    = 'COMP 2315 — Programación Estructurada'
 SECTION   = '202630.73752'
@@ -62,7 +62,7 @@ BITACORA = [
      'Implementación de Paciente.java y Validador.java: atributos, constructor, getters, setters y serialización.',
      'Clase Paciente completamente funcional con toFileString() / fromFileString(); clase Validador con validaciones usando charAt() y length().'),
     ('04/10/2026', '6:30 PM – 9:30 PM\n(3 horas)',
-     'Donovan Irizarry\nCarlos Ramos',
+     'Donovan Irizarry\nCarlo Ramos',
      'Implementación de ArchivoManager.java y ExpedienteManager.java: lógica de archivos y operaciones CRUD.',
      'Persistencia con FileReader/PrintWriter; búsqueda por número y por fecha de visita; submenú de actualización con switch de 11 opciones.'),
     ('04/12/2026', '5:00 PM – 7:30 PM\n(2.5 horas)',

@@ -4,7 +4,7 @@
 **Prof. Dr. Edgardo Vargas Moya**
 
 Creado por: Ektor M. Gonzalez (A00617167), Diego L. Rodriguez Perez (A00636906),
-Donovan Irizarry Figueroa (A00671799), Carlos Ramos (A00642991)
+Donovan Irizarry Figueroa (A00671799), Carlo Ramos (A00642991)
 Sección: 202630.73752 | Fecha de entrega: Por anunciarse
 
 ---

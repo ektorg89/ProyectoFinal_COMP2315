@@ -747,7 +747,7 @@ def main():
     out = 'docs/Flujogramas_COMP2315.pdf'
     c = canvas.Canvas(out, pagesize=letter)
     c.setTitle('Flujogramas — Sistema de Expedientes Médicos — COMP 2315')
-    c.setAuthor('Ektor M. Gonzalez, Diego Rodriguez, Donovan Irizarry, Carlos Ramos')
+    c.setAuthor('Ektor M. Gonzalez, Diego Rodriguez, Donovan Irizarry, Carlo Ramos')
 
     pages = [page1, page2, page3, page4, page5, page6, page7]
     for i, fn in enumerate(pages):

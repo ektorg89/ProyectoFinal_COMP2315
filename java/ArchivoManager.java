@@ -6,7 +6,7 @@
  * Autor(es): Ektor M. Gonzalez - A00617167
  *            Diego L. Rodriguez Perez - A00636906
  *            Donovan Irizarry Figueroa - A00671799
- *            Carlos Ramos - A00642991
+ *            Carlo Ramos - A00642991
  * Curso: COMP 2315 - Programación Estructurada
  * Profesor: Dr. Edgardo Vargas Moya
  * Fecha de creación: 04/14/2026

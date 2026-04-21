@@ -16,7 +16,7 @@
 | 1 | Ektor M. Gonzalez | A00617167 |
 | 2 | Diego L. Rodriguez Perez | A00636906 |
 | 3 | Donovan Irizarry Figueroa | A00671799 |
-| 4 | Carlos Ramos | A00642991 |
+| 4 | Carlo Ramos | A00642991 |
 
 ## Descripción del Proyecto
 
