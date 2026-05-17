@@ -19,11 +19,11 @@ Permite crear, buscar, actualizar y listar expedientes mediante diálogos JOptio
 Desde la carpeta raíz del proyecto (`ProyectoFinal_COMP2315/`):
 
 ```bash
-# Compilar todos los archivos Java (output a class/)
-javac -d class java/*.java
+# Compilar todos los archivos Java
+javac -d "class & java" "class & java"/*.java
 
 # Ejecutar la aplicación
-java -cp class Main
+java -cp "class & java" Main
 ```
 
 ## Credenciales de acceso
@@ -37,17 +37,20 @@ java -cp class Main
 
 ```
 ProyectoFinal_COMP2315/
-├── java/
+├── class & java/
 │   ├── Main.java              → Punto de entrada, login, menú principal
 │   ├── Paciente.java          → Clase con todos los campos del expediente
 │   ├── ExpedienteManager.java → Lógica CRUD de expedientes
 │   ├── ArchivoManager.java    → Lectura/escritura de archivos .txt
 │   ├── Validador.java         → Validaciones de formato (charAt, length)
-│   └── MenuUtils.java         → Menús, login, mensajes de entrada/salida
-├── class/                     → Archivos .class compilados
+│   ├── MenuUtils.java         → Menús, login, mensajes de entrada/salida
+│   └── *.class                → Archivos compilados (generados automáticamente)
 ├── docs/
-│   └── Documentacion_ProyectoFinal_v2.docx → Documentación del proyecto
-├── expedientes.txt            → Expedientes guardados (generado automáticamente)
+│   ├── Documentacion Final.docx       → Documentación del proyecto
+│   ├── PresentacionFinal.pptx         → Presentación oral
+│   └── FlujogramaDePresentacion.rap   → Flujograma de presentación
+├── data/
+│   └── expedientes.txt        → Base de datos de expedientes (generado automáticamente)
 └── README.md
 ```
 

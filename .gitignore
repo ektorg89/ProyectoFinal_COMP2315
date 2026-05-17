@@ -1,10 +1,13 @@
-# Compiled Java class files
-*.class
-class/
+# Ignorar todo por defecto
+/*
 
-# macOS metadata
-.DS_Store
+# Excepciones: las 3 carpetas del proyecto + archivos esenciales
+!/class & java/
+!/docs/
+!/data/
+!.gitignore
+!README.md
 
-# IDE and editor folders
-.idea/
-*.iml
+# Ignorar archivos temporales y de sistema dentro de las carpetas permitidas
+**/.DS_Store
+~$*
